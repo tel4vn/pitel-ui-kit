@@ -1,10 +1,8 @@
 import 'dart:async';
-import 'dart:developer';
 
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:pitel_ui_kit/common_widgets/action_button.dart';
-import 'package:pitel_ui_kit/constants/color.dart';
 import 'package:pitel_ui_kit/services/local_storage/local_store.dart';
 import 'package:plugin_pitel/component/pitel_call_state.dart';
 import 'package:plugin_pitel/component/pitel_rtc_video_view.dart';
@@ -101,7 +99,6 @@ class _MyCallScreenWidget extends State<CallScreenWidget>
   void _backToDialPad() {
     if (mounted && !_isBacked) {
       _isBacked = true;
-      log('DUYJACK _backToDialPad');
       context.pop();
     }
   }
@@ -144,7 +141,6 @@ class _MyCallScreenWidget extends State<CallScreenWidget>
 
     var basicActions = <Widget>[];
     var advanceActions = <Widget>[];
-    debugPrint('_state $_state direction $direction');
     switch (_state) {
       case PitelCallStateEnum.NONE:
       case PitelCallStateEnum.PROGRESS:
@@ -171,7 +167,7 @@ class _MyCallScreenWidget extends State<CallScreenWidget>
             title: pitelCall.audioMuted ? 'unmute' : 'mute',
             icon: pitelCall.audioMuted ? Icons.mic_off : Icons.mic,
             checked: pitelCall.audioMuted,
-            fillColor: ColorApp.primaryColor,
+            fillColor: Colors.green,
             onPressed: () => pitelCall.mute(),
           ));
 
@@ -179,7 +175,7 @@ class _MyCallScreenWidget extends State<CallScreenWidget>
             advanceActions.add(ActionButton(
               title: _speakerOn ? 'speaker off' : 'speaker on',
               icon: _speakerOn ? Icons.volume_off : Icons.volume_up,
-              fillColor: ColorApp.primaryColor,
+              fillColor: Colors.green,
               checked: _speakerOn,
               onPressed: () => _toggleSpeaker(),
             ));
@@ -193,7 +189,6 @@ class _MyCallScreenWidget extends State<CallScreenWidget>
         basicActions.add(hangupBtnInactive);
         break;
       default:
-        debugPrint('Other state => $_state');
         break;
     }
 
@@ -289,7 +284,7 @@ class _MyCallScreenWidget extends State<CallScreenWidget>
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: ColorApp.secondaryHeaderColor,
+      backgroundColor: Colors.white,
       appBar: AppBar(
         automaticallyImplyLeading: false,
         title: Text('[$direction] $_state'),

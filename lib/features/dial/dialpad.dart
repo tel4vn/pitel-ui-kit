@@ -1,12 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
-import 'package:pitel_ui_kit/common_widgets/action_button.dart';
-import 'package:pitel_ui_kit/features/dial/dial_controller.dart';
 import 'package:pitel_ui_kit/routing/app_router.dart';
 import 'package:pitel_ui_kit/services/domain/sip_info_data.dart';
 import 'package:pitel_ui_kit/services/pitel/pitel_service.dart';
-import 'package:pitel_ui_kit/styles/app_themes.dart';
 import 'package:plugin_pitel/component/pitel_call_state.dart';
 import 'package:plugin_pitel/component/sip_pitel_helper_listener.dart';
 import 'package:plugin_pitel/pitel_sdk/pitel_call.dart';
@@ -18,23 +14,23 @@ class DialPadArguments {
   DialPadArguments();
 }
 
-class DialPadWidget extends ConsumerStatefulWidget {
+class DialPadWidget extends StatefulWidget {
   final PitelCall _pitelCall = PitelClient.getInstance().pitelCall;
   final DialPadArguments arguments;
   DialPadWidget({Key? key, required this.arguments}) : super(key: key);
 
   @override
-  ConsumerState<DialPadWidget> createState() => _MyDialPadWidget();
+  State<DialPadWidget> createState() => _MyDialPadWidget();
 }
 
-class _MyDialPadWidget extends ConsumerState<DialPadWidget>
+class _MyDialPadWidget extends State<DialPadWidget>
     implements SipPitelHelperListener {
   late String _dest;
   PitelCall get pitelCall => widget._pitelCall;
   final TextEditingController _textController = TextEditingController();
   late SharedPreferences _preferences;
 
-  String receivedMsg = '';
+  String receivedMsg = 'UNREGISTER';
   PitelClient pitelClient = PitelClient.getInstance();
   String state = '';
 
@@ -42,7 +38,7 @@ class _MyDialPadWidget extends ConsumerState<DialPadWidget>
   initState() {
     super.initState();
     state = pitelCall.getRegisterState();
-    receivedMsg = '';
+    receivedMsg = 'UNREGISTER';
     _bindEventListeners();
     _loadSettings();
   }
@@ -86,16 +82,24 @@ class _MyDialPadWidget extends ConsumerState<DialPadWidget>
         },
       );
     } else {
-      pitelClient.call(dest, voiceonly).then((value) => value.fold(
-          (succ) => {},
-          (err) =>
-              {ref.read(receivedMsgProvider.notifier).state = err.toString()}));
+      pitelClient.call(dest, voiceonly).then((value) =>
+          value.fold((succ) => {}, (err) => {receivedMsg = err.toString()}));
       _preferences.setString('dest', dest);
     }
   }
 
-  List<Widget> _buildDialPad() {
-    return [
+  @override
+  Widget build(BuildContext context) {
+    return Column(crossAxisAlignment: CrossAxisAlignment.center, children: [
+      Container(
+          padding: const EdgeInsets.all(20),
+          width: 360,
+          child: Text(
+            'STATUS: $receivedMsg',
+            textAlign: TextAlign.center,
+            style: const TextStyle(
+                fontSize: 18, fontWeight: FontWeight.bold, color: Colors.red),
+          )),
       ElevatedButton(
         onPressed: () {
           final sipInfo = SipInfoData.fromJson({
@@ -119,17 +123,12 @@ class _MyDialPadWidget extends ConsumerState<DialPadWidget>
         },
         child: const Text("Register"),
       ),
-      SizedBox(
-          width: 360,
-          child: Text(
-            ref.watch(receivedMsgProvider),
-            textAlign: TextAlign.center,
-          )),
+      const SizedBox(height: 20),
       Container(
         color: Colors.amber,
         child: TextField(
           keyboardType: TextInputType.number,
-          style: AppTextTheme.T20B,
+          style: const TextStyle(fontSize: 20),
           textAlign: TextAlign.center,
           decoration: const InputDecoration(
               border: InputBorder.none,
@@ -141,19 +140,12 @@ class _MyDialPadWidget extends ConsumerState<DialPadWidget>
         ),
       ),
       const SizedBox(height: 20),
-      ActionButton(
-        icon: Icons.dialer_sip,
-        fillColor: Colors.green,
-        onPressed: () => _handleCall(context, true),
-      ),
-    ];
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return Column(
-        crossAxisAlignment: CrossAxisAlignment.center,
-        children: _buildDialPad());
+      receivedMsg == "REGISTERED"
+          ? ElevatedButton(
+              onPressed: () => _handleCall(context, true),
+              child: const Text("Call"))
+          : const SizedBox.shrink(),
+    ]);
   }
 
   @override
@@ -165,8 +157,9 @@ class _MyDialPadWidget extends ConsumerState<DialPadWidget>
       case PitelRegistrationStateEnum.NONE:
       case PitelRegistrationStateEnum.UNREGISTERED:
       case PitelRegistrationStateEnum.REGISTERED:
-        ref.read(registerStateProvider.notifier).state =
-            PitelRegistrationStateEnum.REGISTERED;
+        setState(() {
+          receivedMsg = 'REGISTERED';
+        });
         break;
     }
   }
@@ -175,7 +168,9 @@ class _MyDialPadWidget extends ConsumerState<DialPadWidget>
   void onNewMessage(PitelSIPMessageRequest msg) {
     //Save the incoming message to DB
     var msgBody = msg.request.body as String;
-    ref.read(receivedMsgProvider.notifier).state = msgBody;
+    setState(() {
+      receivedMsg = msgBody;
+    });
   }
 
   @override

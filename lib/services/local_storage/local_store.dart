@@ -1,4 +1,3 @@
-import 'package:pitel_ui_kit/constants/constants.dart';
 import 'package:pitel_ui_kit/services/local_storage/references_repository.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -7,6 +6,8 @@ class LocalStorage implements PreferencesRepository {
   static const String _USER_NAME = 'username';
   static const String _PASSWORD = 'username';
   static const String _STATE_CALL = 'state-call';
+  static const String SIP_INFO_KEY = "Sip_INFO_DATA";
+  static const String APP_NAME = "PITEL";
 
   static final LocalStorage _localStorage = LocalStorage._internal();
 

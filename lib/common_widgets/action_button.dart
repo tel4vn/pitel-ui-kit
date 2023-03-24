@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:pitel_ui_kit/constants/color.dart';
 
 // ignore: must_be_immutable
 class ActionButton extends ConsumerWidget {
@@ -76,7 +75,7 @@ class ActionButton extends ConsumerWidget {
                         size: 30.0,
                         color: fillColor != null
                             ? Colors.white
-                            : (checked ? Colors.white : ColorApp.primaryColor),
+                            : (checked ? Colors.white : Colors.green),
                       ),
               ),
             )),

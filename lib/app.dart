@@ -4,7 +4,6 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:pitel_ui_kit/localization/string_hardcoded.dart';
 import 'package:pitel_ui_kit/routing/app_router.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
-import 'package:pitel_ui_kit/styles/app_themes.dart';
 
 class MyApp extends ConsumerWidget {
   const MyApp({Key? key}) : super(key: key);
@@ -25,8 +24,7 @@ class MyApp extends ConsumerWidget {
         GlobalCupertinoLocalizations.delegate,
       ],
       themeMode: ThemeMode.light,
-      theme: AppThemes.lightTheme,
-      darkTheme: AppThemes.darkTheme,
+      theme: ThemeData(primaryColor: Colors.green),
     );
   }
 }
