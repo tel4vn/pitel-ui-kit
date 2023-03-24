@@ -3,7 +3,6 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:pitel_ui_kit/features/call_screen/call_screen.dart';
 import 'package:pitel_ui_kit/features/home/home_screen.dart';
-import 'package:pitel_ui_kit/features/qr_login/presentation/qr_screen.dart';
 
 enum AppRoute { scan, home, callScreen }
 
@@ -17,13 +16,6 @@ final goRouterProvider = Provider<GoRouter>((ref) {
         name: AppRoute.home.name,
         builder: (context, state) => const HomeScreen(),
         routes: [
-          GoRoute(
-            path: 'scan',
-            name: AppRoute.scan.name,
-            builder: (context, state) {
-              return const QRScreen();
-            },
-          ),
           GoRoute(
             path: 'call_screen',
             name: AppRoute.callScreen.name,

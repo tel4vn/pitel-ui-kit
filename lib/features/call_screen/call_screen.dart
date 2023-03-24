@@ -2,7 +2,6 @@ import 'dart:async';
 import 'dart:developer';
 
 import 'package:flutter/material.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:pitel_ui_kit/common_widgets/action_button.dart';
 import 'package:pitel_ui_kit/constants/color.dart';
@@ -14,22 +13,19 @@ import 'package:plugin_pitel/pitel_sdk/pitel_call.dart';
 import 'package:plugin_pitel/pitel_sdk/pitel_client.dart';
 import 'package:plugin_pitel/sip/sip_ua.dart';
 
-class CallScreenWidget extends ConsumerStatefulWidget {
+class CallScreenWidget extends StatefulWidget {
   CallScreenWidget({Key? key, this.receivedBackground = false})
       : super(key: key);
   final PitelCall _pitelCall = PitelClient.getInstance().pitelCall;
   final bool receivedBackground;
 
   @override
-  ConsumerState<CallScreenWidget> createState() => _MyCallScreenWidget();
+  State<CallScreenWidget> createState() => _MyCallScreenWidget();
 }
 
-class _MyCallScreenWidget extends ConsumerState<CallScreenWidget>
+class _MyCallScreenWidget extends State<CallScreenWidget>
     implements SipPitelHelperListener {
   PitelCall get pitelCall => widget._pitelCall;
-  double _localVideoHeight = 0;
-  double _localVideoWidth = 0;
-  EdgeInsetsGeometry _localVideoMargin = const EdgeInsets.all(0);
 
   String _timeLabel = '00:00';
   late Timer _timer;
@@ -39,8 +35,6 @@ class _MyCallScreenWidget extends ConsumerState<CallScreenWidget>
   bool _isBacked = false;
 
   bool get voiceonly => pitelCall.isVoiceOnly();
-
-  String? get remote_identity => pitelCall.remoteIdentity;
 
   String? get direction => pitelCall.direction;
 
@@ -112,41 +106,15 @@ class _MyCallScreenWidget extends ConsumerState<CallScreenWidget>
     }
   }
 
-  void _handelStreams(PitelCallState event) async {
-    _resizeLocalVideo();
-  }
-
-  void _resizeLocalVideo() {
-    setState(() {
-      _localVideoMargin = pitelCall.remoteStream != null
-          ? const EdgeInsets.only(top: 15, right: 15)
-          : const EdgeInsets.all(0);
-      _localVideoWidth = pitelCall.remoteStream != null
-          ? MediaQuery.of(context).size.width / 4
-          : MediaQuery.of(context).size.width;
-      _localVideoHeight = pitelCall.remoteStream != null
-          ? MediaQuery.of(context).size.height / 4
-          : MediaQuery.of(context).size.height;
-    });
-  }
-
   void _handleHangup() {
     pitelCall.hangup();
-    if (_timer != null) {
-      if (_timer.isActive) {
-        _timer.cancel();
-      }
+    if (_timer.isActive) {
+      _timer.cancel();
     }
   }
 
   void _handleAccept() {
     pitelCall.answer();
-  }
-
-  void _switchCamera() {
-    if (pitelCall.localStream != null) {
-      pitelCall.localStream?.getVideoTracks()[0].switchCamera();
-    }
   }
 
   void _toggleSpeaker() {
@@ -208,29 +176,12 @@ class _MyCallScreenWidget extends ConsumerState<CallScreenWidget>
           ));
 
           if (voiceonly) {
-          } else {
-            advanceActions.add(ActionButton(
-              title: "switch camera",
-              icon: Icons.switch_video,
-              onPressed: () => _switchCamera(),
-            ));
-          }
-
-          if (voiceonly) {
             advanceActions.add(ActionButton(
               title: _speakerOn ? 'speaker off' : 'speaker on',
               icon: _speakerOn ? Icons.volume_off : Icons.volume_up,
               fillColor: ColorApp.primaryColor,
               checked: _speakerOn,
               onPressed: () => _toggleSpeaker(),
-            ));
-          } else {
-            advanceActions.add(ActionButton(
-              title: pitelCall.videoIsOff ? "camera on" : 'camera off',
-              icon: pitelCall.videoIsOff ? Icons.videocam : Icons.videocam_off,
-              checked: pitelCall.videoIsOff,
-              fillColor: ColorApp.primaryColor,
-              onPressed: () => pitelCall.toggleCamera(),
             ));
           }
 
@@ -285,11 +236,10 @@ class _MyCallScreenWidget extends ConsumerState<CallScreenWidget>
       stackWidgets.add(Container(
         alignment: Alignment.topRight,
         child: AnimatedContainer(
-          height: _localVideoHeight,
-          width: _localVideoWidth,
+          height: 0,
+          width: 0,
           alignment: Alignment.topRight,
           duration: const Duration(milliseconds: 300),
-          margin: _localVideoMargin,
           child: PitelRTCVideoView(pitelCall.localRenderer!),
         ),
       ));
@@ -305,19 +255,18 @@ class _MyCallScreenWidget extends ConsumerState<CallScreenWidget>
           crossAxisAlignment: CrossAxisAlignment.center,
           mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
-            Center(
+            const Center(
                 child: Padding(
-                    padding: const EdgeInsets.all(6),
+                    padding: EdgeInsets.all(6),
                     child: Text(
-                      (voiceonly ? 'VOICE CALL' : 'VIDEO CALL'),
-                      style:
-                          const TextStyle(fontSize: 24, color: Colors.black54),
+                      'VOICE CALL',
+                      style: TextStyle(fontSize: 24, color: Colors.black54),
                     ))),
             Center(
                 child: Padding(
                     padding: const EdgeInsets.all(6),
                     child: Text(
-                      '$remote_identity',
+                      '${pitelCall.remoteIdentity}',
                       style:
                           const TextStyle(fontSize: 18, color: Colors.black54),
                     ))),
@@ -379,7 +328,6 @@ class _MyCallScreenWidget extends ConsumerState<CallScreenWidget>
       case PitelCallStateEnum.UNMUTED:
         break;
       case PitelCallStateEnum.STREAM:
-        _handelStreams(callState);
         break;
       case PitelCallStateEnum.ENDED:
       case PitelCallStateEnum.FAILED:

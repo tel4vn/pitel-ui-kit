@@ -4,6 +4,8 @@ import 'package:go_router/go_router.dart';
 import 'package:pitel_ui_kit/common_widgets/action_button.dart';
 import 'package:pitel_ui_kit/features/dial/dial_controller.dart';
 import 'package:pitel_ui_kit/routing/app_router.dart';
+import 'package:pitel_ui_kit/services/domain/sip_info_data.dart';
+import 'package:pitel_ui_kit/services/pitel/pitel_service.dart';
 import 'package:pitel_ui_kit/styles/app_themes.dart';
 import 'package:plugin_pitel/component/pitel_call_state.dart';
 import 'package:plugin_pitel/component/sip_pitel_helper_listener.dart';
@@ -73,21 +75,13 @@ class _MyDialPadWidget extends ConsumerState<DialPadWidget>
   void _handleCall(BuildContext context, [bool voiceonly = false]) {
     var dest = _textController.text;
     if (dest.isEmpty) {
-      showDialog<void>(
+      showDialog(
         context: context,
-        barrierDismissible: false,
+        barrierDismissible: true,
         builder: (BuildContext context) {
-          return AlertDialog(
-            title: const Text('Target is empty.'),
-            content: const Text('Please enter a SIP URI or username!'),
-            actions: <Widget>[
-              TextButton(
-                onPressed: () {
-                  context.pop();
-                },
-                child: const Text('Ok'),
-              ),
-            ],
+          return const AlertDialog(
+            title: Text('Target is empty.'),
+            content: Text('Please enter a SIP URI or username!'),
           );
         },
       );
@@ -102,6 +96,29 @@ class _MyDialPadWidget extends ConsumerState<DialPadWidget>
 
   List<Widget> _buildDialPad() {
     return [
+      ElevatedButton(
+        onPressed: () {
+          final sipInfo = SipInfoData.fromJson({
+            "authPass": "Tel4vn.com123@",
+            "registerServer": "mobile.tel4vn.com",
+            "outboundServer": "pbx-mobile.tel4vn.com:50061",
+            "userID": 103,
+            "authID": 103,
+            "accountName": "103",
+            "displayName": "103@mobile.tel4vn.com",
+            "dialPlan": null,
+            "randomPort": null,
+            "voicemail": null,
+            "wssUrl": "wss://wss-mobile.tel4vn.com:7444",
+            "userName": "user3@mobile.tel4vn.com",
+            "apiDomain": "https://api-mobile.tel4vn.com"
+          });
+
+          final pitelClient = PitelServiceImpl();
+          pitelClient.setExtensionInfo(sipInfo);
+        },
+        child: const Text("Register"),
+      ),
       SizedBox(
           width: 360,
           child: Text(
@@ -141,7 +158,6 @@ class _MyDialPadWidget extends ConsumerState<DialPadWidget>
 
   @override
   void registrationStateChanged(PitelRegistrationState state) {
-    debugPrint('registrationStateChanged ${state.state.toString()}');
     switch (state.state) {
       case PitelRegistrationStateEnum.REGISTRATION_FAILED:
         goBack();
