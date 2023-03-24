@@ -3,7 +3,6 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:pitel_ui_kit/common_widgets/action_button.dart';
-import 'package:pitel_ui_kit/services/local_storage/local_store.dart';
 import 'package:plugin_pitel/component/pitel_call_state.dart';
 import 'package:plugin_pitel/component/pitel_rtc_video_view.dart';
 import 'package:plugin_pitel/component/sip_pitel_helper_listener.dart';
@@ -39,21 +38,6 @@ class _MyCallScreenWidget extends State<CallScreenWidget>
   @override
   initState() {
     super.initState();
-    WidgetsBinding.instance.addPostFrameCallback((timeStamp) async {
-      if (!pitelCall.isConnected) {
-        var localStorage = LocalStorage();
-        var account = await localStorage.getAccountLocal();
-        if (account != null) {
-          PitelClient.getInstance()
-              .login(account.username, account.password)
-              .then((value) {
-            if (value) {
-              setState(() {});
-            }
-          });
-        }
-      }
-    });
     pitelCall.addListener(this);
     if (voiceonly) {
       _initRenderers();
@@ -61,6 +45,7 @@ class _MyCallScreenWidget extends State<CallScreenWidget>
     _startTimer();
   }
 
+  // Deactive & Dispose when call end
   @override
   deactivate() {
     super.deactivate();
@@ -69,6 +54,7 @@ class _MyCallScreenWidget extends State<CallScreenWidget>
     _disposeRenderers();
   }
 
+  // Start timer to calculate time of call
   void _startTimer() {
     _timer = Timer.periodic(const Duration(seconds: 1), (Timer timer) {
       final duration = Duration(seconds: timer.tick);
@@ -84,6 +70,7 @@ class _MyCallScreenWidget extends State<CallScreenWidget>
     });
   }
 
+  // INIT: Initialize Pitel
   void _initRenderers() async {
     if (!voiceonly) {
       await pitelCall.initializeLocal();
@@ -91,11 +78,13 @@ class _MyCallScreenWidget extends State<CallScreenWidget>
     }
   }
 
+  // Dispose pitelcall
   void _disposeRenderers() {
     pitelCall.disposeLocalRenderer();
     pitelCall.disposeRemoteRenderer();
   }
 
+  // Back to Home screen
   void _backToDialPad() {
     if (mounted && !_isBacked) {
       _isBacked = true;
@@ -103,6 +92,7 @@ class _MyCallScreenWidget extends State<CallScreenWidget>
     }
   }
 
+  // Handle hangup and reset timer
   void _handleHangup() {
     pitelCall.hangup();
     if (_timer.isActive) {
@@ -110,10 +100,12 @@ class _MyCallScreenWidget extends State<CallScreenWidget>
     }
   }
 
+  // Handle accept call
   void _handleAccept() {
     pitelCall.answer();
   }
 
+  // Turn on/off speaker
   void _toggleSpeaker() {
     if (pitelCall.localStream != null) {
       _speakerOn = !_speakerOn;
@@ -310,6 +302,7 @@ class _MyCallScreenWidget extends State<CallScreenWidget>
     );
   }
 
+  // Handle call state
   @override
   void callStateChanged(String callId, PitelCallState callState) {
     setState(() {
@@ -339,6 +332,7 @@ class _MyCallScreenWidget extends State<CallScreenWidget>
     }
   }
 
+  // Setup initialize listener
   @override
   void onNewMessage(PitelSIPMessageRequest msg) {}
 

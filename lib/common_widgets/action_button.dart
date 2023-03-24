@@ -1,8 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 // ignore: must_be_immutable
-class ActionButton extends ConsumerWidget {
+class ActionButton extends StatelessWidget {
   final String title;
   final FontWeight fontWeight;
   final TextStyle titleStyle;
@@ -31,7 +30,7 @@ class ActionButton extends ConsumerWidget {
       : super(key: key);
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
+  Widget build(BuildContext context) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.center,
       mainAxisAlignment: MainAxisAlignment.start,
@@ -54,19 +53,10 @@ class ActionButton extends ConsumerWidget {
                         children: <Widget>[
                             Text(
                               title,
-                              // style: TextStyle(
-                              //   fontSize: 18,
-                              //   fontWeight: fontWeight,
-                              //   color: fillColor ?? Colors.grey[500],
-                              // )
                               style: titleStyle,
                             ),
                             Text(
                               subTitle.toUpperCase(),
-                              // style: TextStyle(
-                              //   fontSize: 8,
-                              //   color: fillColor ?? Colors.grey[500],
-                              // ),
                               style: subTitleStyle,
                             )
                           ])
