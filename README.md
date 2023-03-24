@@ -5,6 +5,9 @@
 
 plugin_pitel là package hỗ trợ đàm thoại voip vào dự án Flutter của bạn.✨ 
 
+## Demo
+![Register extension](assets/images/pitel_img_1.png)
+![call](assets/images/pitel_img_2.png)
 ## Installation
 1. Tạo 1 folder lưu trữ package (vì package này là private, sẽ hỗ trợ link github  sau)
 ```
@@ -640,6 +643,18 @@ class _MyCallScreenWidget extends State<CallScreenWidget>
   }
 }
 ```
+
+## Test
+Sử dụng tryit để thực hiện đàm thoại
+Link: https://tryit.jssip.net/
+Setting: 
+1. Try cập vào link trên
+2. Nhập số extension: ví dụ 102
+3. Chọn icon Setting góc phải
+4. Nhập các thông tin cần thiết
+![tryit](assets/images/pitel_img_2.png)
+5. Save
+6. Click icon ->
 
 ## License
 Copyright by Tel4vn
