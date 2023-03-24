@@ -3,7 +3,6 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:pitel_ui_kit/app.dart';
-import 'package:pitel_ui_kit/localization/string_hardcoded.dart';
 
 void main() async {
   await runZonedGuarded(() async {
@@ -23,7 +22,7 @@ void main() async {
       return Scaffold(
         appBar: AppBar(
           backgroundColor: Colors.red,
-          title: Text('An error occurred'.hardcoded),
+          title: const Text('An error occurred'),
         ),
         body: Center(child: Text(details.toString())),
       );

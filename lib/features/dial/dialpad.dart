@@ -166,7 +166,6 @@ class _MyDialPadWidget extends State<DialPadWidget>
 
   @override
   void onNewMessage(PitelSIPMessageRequest msg) {
-    //Save the incoming message to DB
     var msgBody = msg.request.body as String;
     setState(() {
       receivedMsg = msgBody;
