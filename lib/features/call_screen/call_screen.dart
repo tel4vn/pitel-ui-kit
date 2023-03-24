@@ -84,6 +84,55 @@ class _MyCallScreenWidget extends State<CallScreenWidget>
     pitelCall.disposeRemoteRenderer();
   }
 
+  // STATUS: Handle call state
+  @override
+  void callStateChanged(String callId, PitelCallState callState) {
+    setState(() {
+      _state = callState.state;
+    });
+    switch (callState.state) {
+      case PitelCallStateEnum.HOLD:
+      case PitelCallStateEnum.UNHOLD:
+        break;
+      case PitelCallStateEnum.MUTED:
+      case PitelCallStateEnum.UNMUTED:
+        break;
+      case PitelCallStateEnum.STREAM:
+        break;
+      case PitelCallStateEnum.ENDED:
+      case PitelCallStateEnum.FAILED:
+        _backToDialPad();
+        break;
+      case PitelCallStateEnum.CONNECTING:
+      case PitelCallStateEnum.PROGRESS:
+      case PitelCallStateEnum.ACCEPTED:
+      case PitelCallStateEnum.CONFIRMED:
+      case PitelCallStateEnum.NONE:
+      case PitelCallStateEnum.CALL_INITIATION:
+      case PitelCallStateEnum.REFER:
+        break;
+    }
+  }
+
+  // Setup initialize listener
+  @override
+  void onNewMessage(PitelSIPMessageRequest msg) {}
+
+  @override
+  void registrationStateChanged(PitelRegistrationState state) {}
+
+  @override
+  void transportStateChanged(PitelTransportState state) {}
+
+  @override
+  void onCallReceived(String callId) {
+    pitelCall.setCallCurrent(callId);
+    setState(() {});
+  }
+
+  @override
+  void onCallInitiated(String callId) {}
+
   // Back to Home screen
   void _backToDialPad() {
     if (mounted && !_isBacked) {
@@ -301,53 +350,4 @@ class _MyCallScreenWidget extends State<CallScreenWidget>
           : const SizedBox(),
     );
   }
-
-  // Handle call state
-  @override
-  void callStateChanged(String callId, PitelCallState callState) {
-    setState(() {
-      _state = callState.state;
-    });
-    switch (callState.state) {
-      case PitelCallStateEnum.HOLD:
-      case PitelCallStateEnum.UNHOLD:
-        break;
-      case PitelCallStateEnum.MUTED:
-      case PitelCallStateEnum.UNMUTED:
-        break;
-      case PitelCallStateEnum.STREAM:
-        break;
-      case PitelCallStateEnum.ENDED:
-      case PitelCallStateEnum.FAILED:
-        _backToDialPad();
-        break;
-      case PitelCallStateEnum.CONNECTING:
-      case PitelCallStateEnum.PROGRESS:
-      case PitelCallStateEnum.ACCEPTED:
-      case PitelCallStateEnum.CONFIRMED:
-      case PitelCallStateEnum.NONE:
-      case PitelCallStateEnum.CALL_INITIATION:
-      case PitelCallStateEnum.REFER:
-        break;
-    }
-  }
-
-  // Setup initialize listener
-  @override
-  void onNewMessage(PitelSIPMessageRequest msg) {}
-
-  @override
-  void registrationStateChanged(PitelRegistrationState state) {}
-
-  @override
-  void transportStateChanged(PitelTransportState state) {}
-
-  @override
-  void onCallReceived(String callId) {
-    pitelCall.setCallCurrent(callId);
-    setState(() {});
-  }
-
-  @override
-  void onCallInitiated(String callId) {}
 }

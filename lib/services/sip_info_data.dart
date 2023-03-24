@@ -1,7 +1,7 @@
 import 'package:plugin_pitel/model/http/get_extension_info.dart';
 import 'package:plugin_pitel/model/sip_server.dart';
 
-const String apiBaseUrl = 'https://api-mobile.tel4vn.com';
+const String apiBaseUrl = 'https://pbx-mobile.tel4vn.com';
 
 class SipInfoData {
   final String authPass;
