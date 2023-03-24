@@ -1,5 +1,5 @@
-import 'package:pitel_ui_kit/services/models/sip_info_data.dart';
-import 'package:pitel_ui_kit/services/pitel/pitel_service_interface.dart';
+import 'package:pitel_ui_kit/services/pitel_service_interface.dart';
+import 'package:pitel_ui_kit/services/sip_info_data.dart';
 import 'package:plugin_pitel/component/pitel_call_state.dart';
 import 'package:plugin_pitel/component/sip_pitel_helper_listener.dart';
 import 'package:plugin_pitel/pitel_sdk/pitel_client.dart';

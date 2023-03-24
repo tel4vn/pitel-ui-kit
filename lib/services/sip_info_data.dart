@@ -1,6 +1,7 @@
-import 'package:pitel_ui_kit/configs/configs.dart';
 import 'package:plugin_pitel/model/http/get_extension_info.dart';
 import 'package:plugin_pitel/model/sip_server.dart';
+
+const String apiBaseUrl = 'https://api-mobile.tel4vn.com';
 
 class SipInfoData {
   final String authPass;
@@ -43,7 +44,7 @@ class SipInfoData {
             outboundServer: "",
             authPass: "",
             userName: "",
-            apiDomain: Configs.apiBaseUrl);
+            apiDomain: apiBaseUrl);
 
   factory SipInfoData.fromJson(Map<String, dynamic> data) {
     return SipInfoData(

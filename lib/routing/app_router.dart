@@ -10,7 +10,7 @@ final GoRouter router = GoRouter(
     GoRoute(
       path: '/',
       name: AppRoute.home.name,
-      builder: (context, state) => const HomeScreen(),
+      builder: (context, state) => HomeScreen(),
       routes: [
         GoRoute(
           path: 'call_screen',
