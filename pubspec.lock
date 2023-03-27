@@ -371,7 +371,7 @@ packages:
   plugin_pitel:
     dependency: "direct main"
     description:
-      path: "../pitel_sdk"
+      path: "../flutter_pitel_voip"
       relative: true
     source: path
     version: "0.0.1"
