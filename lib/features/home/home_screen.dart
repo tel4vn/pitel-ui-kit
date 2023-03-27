@@ -1,12 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:pitel_ui_kit/routing/app_router.dart';
-import 'package:pitel_ui_kit/services/pitel_service.dart';
-import 'package:pitel_ui_kit/services/sip_info_data.dart';
 import 'package:plugin_pitel/component/pitel_call_state.dart';
 import 'package:plugin_pitel/component/sip_pitel_helper_listener.dart';
 import 'package:plugin_pitel/pitel_sdk/pitel_call.dart';
 import 'package:plugin_pitel/pitel_sdk/pitel_client.dart';
+import 'package:plugin_pitel/services/pitel_service.dart';
+import 'package:plugin_pitel/services/sip_info_data.dart';
 import 'package:plugin_pitel/sip/sip_ua.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
