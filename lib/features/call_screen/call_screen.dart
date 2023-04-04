@@ -194,16 +194,34 @@ class _MyCallScreenWidget extends State<CallScreenWidget>
       case PitelCallStateEnum.NONE:
       case PitelCallStateEnum.PROGRESS:
         if (direction == 'INCOMING') {
-          basicActions.add(ActionButton(
-            title: "Accept",
-            fillColor: Colors.green,
-            icon: Icons.phone,
-            onPressed: () => _handleAccept(),
-          ));
-          basicActions.add(hangupBtn);
+          basicActions = [
+            ActionButton(
+              title: "Accept",
+              fillColor: Colors.green,
+              icon: Icons.phone,
+              onPressed: () => _handleAccept(),
+            ),
+            hangupBtn
+          ];
         } else {
-          basicActions.add(hangupBtn);
+          basicActions = [hangupBtn];
         }
+        break;
+      case PitelCallStateEnum.STREAM:
+        basicActions = [hangupBtn];
+
+        basicActions = [
+          ActionButton(
+            title: "hangup",
+            onPressed: () {
+              _disposeRenderers();
+              context.pop();
+              pitelCall.removeListener(this);
+            },
+            icon: Icons.call_end,
+            fillColor: Colors.red,
+          ),
+        ];
         break;
       case PitelCallStateEnum.CONNECTING:
         break;
