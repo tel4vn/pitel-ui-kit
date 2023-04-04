@@ -30,6 +30,7 @@ class _MyCallScreenWidget extends State<CallScreenWidget>
   PitelCallStateEnum _state = PitelCallStateEnum.NONE;
   bool calling = false;
   bool _isBacked = false;
+  String _callId = '';
 
   bool get voiceonly => pitelCall.isVoiceOnly();
 
@@ -101,12 +102,19 @@ class _MyCallScreenWidget extends State<CallScreenWidget>
         break;
       case PitelCallStateEnum.ENDED:
       case PitelCallStateEnum.FAILED:
+        setState(() {
+          _callId = callId;
+        });
         _backToDialPad();
         break;
       case PitelCallStateEnum.CONNECTING:
       case PitelCallStateEnum.PROGRESS:
       case PitelCallStateEnum.ACCEPTED:
       case PitelCallStateEnum.CONFIRMED:
+        setState(() {
+          _callId = callId;
+        });
+        break;
       case PitelCallStateEnum.NONE:
       case PitelCallStateEnum.CALL_INITIATION:
       case PitelCallStateEnum.REFER:
@@ -143,7 +151,7 @@ class _MyCallScreenWidget extends State<CallScreenWidget>
 
   // Handle hangup and reset timer
   void _handleHangup() {
-    pitelCall.hangup();
+    pitelCall.hangup(callId: _callId);
     if (_timer.isActive) {
       _timer.cancel();
     }

@@ -135,19 +135,19 @@ class _MyHomeScreen extends State<HomeScreen>
           onPressed: () {
             // SIP INFO DATA: input Sip info config data
             final sipInfo = SipInfoData.fromJson({
-              "authPass": "Tel4vn.com123@",
-              "registerServer": "mobile.tel4vn.com",
+              "authPass": "DevTest#2023@!",
+              "registerServer": "dev-test.tel4vn.com",
               "outboundServer": "pbx-mobile.tel4vn.com:50061",
-              "userID": 103,
-              "authID": 103,
-              "accountName": "103",
-              "displayName": "103@mobile.tel4vn.com",
+              "userID": 101,
+              "authID": 101,
+              "accountName": "101",
+              "displayName": "101@dev-test.tel4vn.com",
               "dialPlan": null,
               "randomPort": null,
               "voicemail": null,
               "wssUrl": "wss://wss-mobile.tel4vn.com:7444",
-              "userName": "user3@mobile.tel4vn.com",
-              "apiDomain": "https://api-mobile.tel4vn.com"
+              "userName": "user1@dev-test.tel4vn.com",
+              "apiDomain": "https://pbx-mobile.tel4vn.com"
             });
 
             final pitelClient = PitelServiceImpl();
