@@ -15,7 +15,3 @@ flutter pub get
 ```yaml
 flutter run
 ```
-
-## License
-Copyright by Tel4vn
-
