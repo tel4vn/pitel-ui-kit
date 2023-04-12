@@ -1,4 +1,7 @@
+import 'dart:developer';
+
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:pitel_ui_kit/routing/app_router.dart';
 import 'package:plugin_pitel/component/pitel_call_state.dart';
@@ -8,17 +11,21 @@ import 'package:plugin_pitel/pitel_sdk/pitel_client.dart';
 import 'package:plugin_pitel/services/pitel_service.dart';
 import 'package:plugin_pitel/services/sip_info_data.dart';
 import 'package:plugin_pitel/sip/sip_ua.dart';
+import 'package:plugin_pitel/voip_push/push_notif.dart';
+import 'package:plugin_pitel/voip_push/voip_notif.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-class HomeScreen extends StatefulWidget {
+final checkIsPushNotif = StateProvider<bool>((ref) => false);
+
+class HomeScreen extends ConsumerStatefulWidget {
   final PitelCall _pitelCall = PitelClient.getInstance().pitelCall;
   HomeScreen({Key? key}) : super(key: key);
 
   @override
-  State<HomeScreen> createState() => _MyHomeScreen();
+  ConsumerState<HomeScreen> createState() => _MyHomeScreen();
 }
 
-class _MyHomeScreen extends State<HomeScreen>
+class _MyHomeScreen extends ConsumerState<HomeScreen>
     implements SipPitelHelperListener {
   late String _dest;
   PitelCall get pitelCall => widget._pitelCall;
@@ -28,6 +35,7 @@ class _MyHomeScreen extends State<HomeScreen>
   String receivedMsg = 'UNREGISTER';
   PitelClient pitelClient = PitelClient.getInstance();
   String state = '';
+  bool isLogin = false;
 
   // INIT: Initialize state
   @override
@@ -37,6 +45,21 @@ class _MyHomeScreen extends State<HomeScreen>
     receivedMsg = 'UNREGISTER';
     _bindEventListeners();
     _loadSettings();
+    _getDeviceToken();
+    VoipNotifService.listenerEvent(
+      callback: (event) {},
+      onCallAccept: () {
+        context.pushNamed(AppRoute.callScreen.name);
+      },
+      onCallDecline: () {},
+    );
+  }
+
+  void _getDeviceToken() async {
+    final deviceToken = await PushVoipNotif.getDeviceToken();
+    print('================deviceToken================');
+    print(deviceToken);
+    print('==================================');
   }
 
   @override
@@ -78,7 +101,11 @@ class _MyHomeScreen extends State<HomeScreen>
   @override
   void onCallReceived(String callId) {
     pitelCall.setCallCurrent(callId);
-    context.pushNamed(AppRoute.callScreen.name);
+    //! Replace if you are using other State Managerment (Bloc, GetX,...)
+    final isPushNotif = ref.watch(checkIsPushNotif);
+    if (!isPushNotif) {
+      context.pushNamed(AppRoute.callScreen.name);
+    }
   }
 
   @override
@@ -114,6 +141,37 @@ class _MyHomeScreen extends State<HomeScreen>
     context.go('/');
   }
 
+  void _logout() {
+    setState(() {
+      isLogin = false;
+      receivedMsg = 'UNREGISTER';
+    });
+    _removeDeviceToken();
+    pitelCall.unregister();
+  }
+
+  void _registerDeviceToken() async {
+    final response = await pitelClient.registerDeviceToken(
+      deviceToken:
+          '56357b057da09ba1c8a069c06a0f0232f7a1d80bf743f757c290a20b42dce55c',
+      platform: 'ios',
+      bundleId: 'com.pitel.uikit.demo',
+      domain: 'mobile.tel4vn.com',
+      extension: '101',
+    );
+    inspect(response);
+  }
+
+  void _removeDeviceToken() async {
+    final response = await pitelClient.removeDeviceToken(
+      deviceToken:
+          '56357b057da09ba1c8a069c06a0f0232f7a1d80bf743f757c290a20b42dce55c',
+      domain: 'mobile.tel4vn.com',
+      extension: '101',
+    );
+    inspect(response);
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -131,30 +189,54 @@ class _MyHomeScreen extends State<HomeScreen>
               style: const TextStyle(
                   fontSize: 18, fontWeight: FontWeight.bold, color: Colors.red),
             )),
-        ElevatedButton(
-          onPressed: () {
-            // SIP INFO DATA: input Sip info config data
-            final sipInfo = SipInfoData.fromJson({
-                "authPass": "${Password}",
-                "registerServer": "${Domain}",
-                "outboundServer": "${Outbound Proxy}",
-                "userID": UUser,                // Example 101
-                "authID": UUser,                // Example 101
-                "accountName": "${UUser}",      // Example 101
-                "displayName": "${UUser}@${Domain}",
-                "dialPlan": null,
-                "randomPort": null,
-                "voicemail": null,
-                "wssUrl": "${URL WSS}",
-                "userName": "${username}@${Domain}",
-                "apiDomain": "${URL API}"
-          });
+        isLogin
+            ? TextButton(
+                onPressed: _logout,
+                child: const Text(
+                  'Logout',
+                  style: TextStyle(
+                    color: Colors.red,
+                    fontWeight: FontWeight.w600,
+                  ),
+                ))
+            : ElevatedButton(
+                onPressed: () {
+                  // SIP INFO DATA: input Sip info config data
+                    final sipInfo = SipInfoData.fromJson({
+                        "authPass": "${Password}",
+                        "registerServer": "${Domain}",
+                        "outboundServer": "${Outbound Proxy}",
+                        "userID": UUser,                // Example 101
+                        "authID": UUser,                // Example 101
+                        "accountName": "${UUser}",      // Example 101
+                        "displayName": "${UUser}@${Domain}",
+                        "dialPlan": null,
+                        "randomPort": null,
+                        "voicemail": null,
+                        "wssUrl": "${URL WSS}",
+                        "userName": "${username}@${Domain}",
+                        "apiDomain": "${URL API}"
+                  });
 
-            final pitelClient = PitelServiceImpl();
-            pitelClient.setExtensionInfo(sipInfo);
-          },
-          child: const Text("Register"),
-        ),
+                  final pitelClient = PitelServiceImpl();
+                  pitelClient.setExtensionInfo(sipInfo);
+                  setState(() {
+                    isLogin = true;
+                  });
+                  _registerDeviceToken();
+                },
+                child: const Text("Register"),
+              ),
+        const SizedBox(height: 20),
+        // ElevatedButton(
+        //   onPressed: _registerDeviceToken,
+        //   child: const Text("Register device token when Login"),
+        // ),
+        // const SizedBox(height: 20),
+        // ElevatedButton(
+        //   onPressed: _removeDeviceToken,
+        //   child: const Text("Remove Device Token when Logout"),
+        // ),
         const SizedBox(height: 20),
         Container(
           color: Colors.green,
@@ -190,6 +272,10 @@ class _MyHomeScreen extends State<HomeScreen>
         break;
       case PitelRegistrationStateEnum.NONE:
       case PitelRegistrationStateEnum.UNREGISTERED:
+        setState(() {
+          receivedMsg = 'UNREGISTERED';
+        });
+        break;
       case PitelRegistrationStateEnum.REGISTERED:
         setState(() {
           receivedMsg = 'REGISTERED';

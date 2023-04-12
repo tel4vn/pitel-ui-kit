@@ -1,8 +1,11 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
+import 'package:flutter_callkit_incoming/flutter_callkit_incoming.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:pitel_ui_kit/common_widgets/action_button.dart';
+import 'package:pitel_ui_kit/features/home/home_screen.dart';
 import 'package:plugin_pitel/component/pitel_call_state.dart';
 import 'package:plugin_pitel/component/pitel_rtc_video_view.dart';
 import 'package:plugin_pitel/component/sip_pitel_helper_listener.dart';
@@ -10,17 +13,17 @@ import 'package:plugin_pitel/pitel_sdk/pitel_call.dart';
 import 'package:plugin_pitel/pitel_sdk/pitel_client.dart';
 import 'package:plugin_pitel/sip/sip_ua.dart';
 
-class CallScreenWidget extends StatefulWidget {
+class CallScreenWidget extends ConsumerStatefulWidget {
   CallScreenWidget({Key? key, this.receivedBackground = false})
       : super(key: key);
   final PitelCall _pitelCall = PitelClient.getInstance().pitelCall;
   final bool receivedBackground;
 
   @override
-  State<CallScreenWidget> createState() => _MyCallScreenWidget();
+  ConsumerState<CallScreenWidget> createState() => _MyCallScreenWidget();
 }
 
-class _MyCallScreenWidget extends State<CallScreenWidget>
+class _MyCallScreenWidget extends ConsumerState<CallScreenWidget>
     implements SipPitelHelperListener {
   PitelCall get pitelCall => widget._pitelCall;
 
@@ -105,6 +108,8 @@ class _MyCallScreenWidget extends State<CallScreenWidget>
         setState(() {
           _callId = callId;
         });
+        //! Replace if you are using other State Managerment (Bloc, GetX,...)
+        ref.read(checkIsPushNotif.notifier).state = false;
         _backToDialPad();
         break;
       case PitelCallStateEnum.CONNECTING:
@@ -135,7 +140,8 @@ class _MyCallScreenWidget extends State<CallScreenWidget>
   @override
   void onCallReceived(String callId) {
     pitelCall.setCallCurrent(callId);
-    setState(() {});
+    _handleAccept();
+    FlutterCallkitIncoming.endCall(callId);
   }
 
   @override
@@ -174,6 +180,8 @@ class _MyCallScreenWidget extends State<CallScreenWidget>
     var hangupBtn = ActionButton(
       title: "hangup",
       onPressed: () {
+        //! Replace if you are using other State Managerment (Bloc, GetX,...)
+        ref.read(checkIsPushNotif.notifier).state = false;
         _handleHangup();
         _backToDialPad();
       },
