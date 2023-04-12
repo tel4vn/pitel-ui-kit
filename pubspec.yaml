@@ -39,6 +39,7 @@ dependencies:
   plugin_pitel: 
     path: ../flutter_pitel_voip
   flutter_callkit_incoming: ^1.0.3+3
+  flutter_riverpod: ^2.3.4
   # plugin_pitel:
   #   git:
   #     url: https://{{Personal Access Token}}@github.com/tel4vn/flutter-pitel-voip.git
