@@ -38,8 +38,6 @@ dependencies:
   go_router: 3.0.3
   plugin_pitel: 
     path: ../flutter_pitel_voip
-  firebase_messaging: ^14.4.0
-  firebase_core: ^2.9.0
   flutter_callkit_incoming: ^1.0.3+3
   # plugin_pitel:
   #   git:
