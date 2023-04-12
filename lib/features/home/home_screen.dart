@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:pitel_ui_kit/routing/app_router.dart';
+import 'package:pitel_ui_kit/voip_push/push_notif.dart';
 import 'package:plugin_pitel/component/pitel_call_state.dart';
 import 'package:plugin_pitel/component/sip_pitel_helper_listener.dart';
 import 'package:plugin_pitel/pitel_sdk/pitel_call.dart';
@@ -37,6 +38,14 @@ class _MyHomeScreen extends State<HomeScreen>
     receivedMsg = 'UNREGISTER';
     _bindEventListeners();
     _loadSettings();
+    _getDeviceToken();
+  }
+
+  void _getDeviceToken() async {
+    final deviceToken = await PushVoipNotif.getDeviceToken();
+    print('================deviceToken================');
+    print(deviceToken);
+    print('==================================');
   }
 
   @override
@@ -134,21 +143,37 @@ class _MyHomeScreen extends State<HomeScreen>
         ElevatedButton(
           onPressed: () {
             // SIP INFO DATA: input Sip info config data
+            //   final sipInfo = SipInfoData.fromJson({
+            //       "authPass": "${Password}",
+            //       "registerServer": "${Domain}",
+            //       "outboundServer": "${Outbound Proxy}",
+            //       "userID": UUser,                // Example 101
+            //       "authID": UUser,                // Example 101
+            //       "accountName": "${UUser}",      // Example 101
+            //       "displayName": "${UUser}@${Domain}",
+            //       "dialPlan": null,
+            //       "randomPort": null,
+            //       "voicemail": null,
+            //       "wssUrl": "${URL WSS}",
+            //       "userName": "${username}@${Domain}",
+            //       "apiDomain": "${URL API}"
+            // });
+
             final sipInfo = SipInfoData.fromJson({
-                "authPass": "${Password}",
-                "registerServer": "${Domain}",
-                "outboundServer": "${Outbound Proxy}",
-                "userID": UUser,                // Example 101
-                "authID": UUser,                // Example 101
-                "accountName": "${UUser}",      // Example 101
-                "displayName": "${UUser}@${Domain}",
-                "dialPlan": null,
-                "randomPort": null,
-                "voicemail": null,
-                "wssUrl": "${URL WSS}",
-                "userName": "${username}@${Domain}",
-                "apiDomain": "${URL API}"
-          });
+              "authPass": "Tel4vn.com123@",
+              "registerServer": "mobile.tel4vn.com",
+              "outboundServer": "pbx-mobile.tel4vn.com:50061",
+              "userID": 103,
+              "authID": 103,
+              "accountName": "103",
+              "displayName": "103@mobile.tel4vn.com",
+              "dialPlan": null,
+              "randomPort": null,
+              "voicemail": null,
+              "wssUrl": "wss://wss-mobile.tel4vn.com:7444",
+              "userName": "user3@mobile.tel4vn.com",
+              "apiDomain": "https://api-mobile.tel4vn.com"
+            });
 
             final pitelClient = PitelServiceImpl();
             pitelClient.setExtensionInfo(sipInfo);
