@@ -36,6 +36,8 @@ dependencies:
   cupertino_icons: ^1.0.2
   flutter_lints: 2.0.1
   go_router: 3.0.3
+  # plugin_pitel: 
+  #   path: ../flutter_pitel_voip
   flutter_callkit_incoming: ^1.0.3+3
   flutter_riverpod: ^2.3.4
   plugin_pitel:
