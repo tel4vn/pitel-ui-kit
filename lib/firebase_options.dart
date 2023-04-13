@@ -38,12 +38,12 @@ class DefaultFirebaseOptions {
     }
   }
 
-  //! Replace your google_service.json
+  //! Replace information from your google_service.json
   static const FirebaseOptions android = FirebaseOptions(
-    apiKey: 'AIzaSyCY1xH7ysbcMkix-KC9otPpuYnE553D41w',
-    appId: '1:78015500885:android:65c1130efe25428378badc',
-    messagingSenderId: '78015500885',
-    projectId: 'gencrm-c1658',
-    storageBucket: 'gencrm-c1658.appspot.com',
+    apiKey: '${apiKey}',
+    appId: '${appId}',
+    messagingSenderId: '${messagingSenderId}',
+    projectId: '${projectId}',
+    storageBucket: '${projectId}-c1658.appspot.com',
   );
 }
