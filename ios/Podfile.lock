@@ -72,9 +72,6 @@ PODS:
   - plugin_pitel (0.0.1):
     - Flutter
   - PromisesObjC (2.2.0)
-  - shared_preferences_foundation (0.0.1):
-    - Flutter
-    - FlutterMacOS
   - WebRTC-SDK (104.5112.09)
 
 DEPENDENCIES:
@@ -86,7 +83,6 @@ DEPENDENCIES:
   - flutter_webrtc (from `.symlinks/plugins/flutter_webrtc/ios`)
   - path_provider_ios (from `.symlinks/plugins/path_provider_ios/ios`)
   - plugin_pitel (from `.symlinks/plugins/plugin_pitel/ios`)
-  - shared_preferences_foundation (from `.symlinks/plugins/shared_preferences_foundation/ios`)
 
 SPEC REPOS:
   trunk:
@@ -119,8 +115,6 @@ EXTERNAL SOURCES:
     :path: ".symlinks/plugins/path_provider_ios/ios"
   plugin_pitel:
     :path: ".symlinks/plugins/plugin_pitel/ios"
-  shared_preferences_foundation:
-    :path: ".symlinks/plugins/shared_preferences_foundation/ios"
 
 SPEC CHECKSUMS:
   CryptoSwift: e71dbe5bbb7a945e365d4b9034dbccf28d033a8f
@@ -141,7 +135,6 @@ SPEC CHECKSUMS:
   path_provider_ios: 14f3d2fd28c4fdb42f44e0f751d12861c43cee02
   plugin_pitel: b943cee8824571ad13b9f8fe4877924873720227
   PromisesObjC: 09985d6d70fbe7878040aa746d78236e6946d2ef
-  shared_preferences_foundation: 986fc17f3d3251412d18b0265f9c64113a8c2472
   WebRTC-SDK: 3fa5c6fa717314fade68bffed85737484a28ad0b
 
 PODFILE CHECKSUM: b5e69c1be83e35fb7bd18a07de39471918bcabc6

@@ -1,5 +1,3 @@
-import 'dart:developer';
-
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
@@ -13,7 +11,6 @@ import 'package:plugin_pitel/services/sip_info_data.dart';
 import 'package:plugin_pitel/sip/sip_ua.dart';
 import 'package:plugin_pitel/voip_push/push_notif.dart';
 import 'package:plugin_pitel/voip_push/voip_notif.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 
 final checkIsPushNotif = StateProvider<bool>((ref) => false);
 
@@ -27,10 +24,9 @@ class HomeScreen extends ConsumerStatefulWidget {
 
 class _MyHomeScreen extends ConsumerState<HomeScreen>
     implements SipPitelHelperListener {
-  late String _dest;
+  // late String _dest;
   PitelCall get pitelCall => widget._pitelCall;
   final TextEditingController _textController = TextEditingController();
-  late SharedPreferences _preferences;
 
   String receivedMsg = 'UNREGISTER';
   PitelClient pitelClient = PitelClient.getInstance();
@@ -44,7 +40,6 @@ class _MyHomeScreen extends ConsumerState<HomeScreen>
     state = pitelCall.getRegisterState();
     receivedMsg = 'UNREGISTER';
     _bindEventListeners();
-    _loadSettings();
     _getDeviceToken();
     VoipNotifService.listenerEvent(
       callback: (event) {},
@@ -57,22 +52,13 @@ class _MyHomeScreen extends ConsumerState<HomeScreen>
 
   void _getDeviceToken() async {
     final deviceToken = await PushVoipNotif.getDeviceToken();
-    print('================deviceToken================');
     print(deviceToken);
-    print('==================================');
   }
 
   @override
   void deactivate() {
     super.deactivate();
     _removeEventListeners();
-  }
-
-  // INIT: Load default settings
-  void _loadSettings() async {
-    _preferences = await SharedPreferences.getInstance();
-    _dest = _preferences.getString('dest') ?? '';
-    _textController.text = _dest;
   }
 
   void _bindEventListeners() {
@@ -132,7 +118,6 @@ class _MyHomeScreen extends ConsumerState<HomeScreen>
     } else {
       pitelClient.call(dest, voiceonly).then((value) =>
           value.fold((succ) => {}, (err) => {receivedMsg = err.toString()}));
-      _preferences.setString('dest', dest);
     }
   }
 
@@ -159,7 +144,6 @@ class _MyHomeScreen extends ConsumerState<HomeScreen>
       domain: 'mobile.tel4vn.com',
       extension: '101',
     );
-    inspect(response);
   }
 
   void _removeDeviceToken() async {
@@ -169,7 +153,6 @@ class _MyHomeScreen extends ConsumerState<HomeScreen>
       domain: 'mobile.tel4vn.com',
       extension: '101',
     );
-    inspect(response);
   }
 
   @override
@@ -216,7 +199,8 @@ class _MyHomeScreen extends ConsumerState<HomeScreen>
                         "wssUrl": "${URL WSS}",
                         "userName": "${username}@${Domain}",
                         "apiDomain": "${URL API}"
-                  });
+                    });
+                  
 
                   final pitelClient = PitelServiceImpl();
                   pitelClient.setExtensionInfo(sipInfo);
@@ -227,16 +211,6 @@ class _MyHomeScreen extends ConsumerState<HomeScreen>
                 },
                 child: const Text("Register"),
               ),
-        const SizedBox(height: 20),
-        // ElevatedButton(
-        //   onPressed: _registerDeviceToken,
-        //   child: const Text("Register device token when Login"),
-        // ),
-        // const SizedBox(height: 20),
-        // ElevatedButton(
-        //   onPressed: _removeDeviceToken,
-        //   child: const Text("Remove Device Token when Logout"),
-        // ),
         const SizedBox(height: 20),
         Container(
           color: Colors.green,

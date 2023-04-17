@@ -44,6 +44,15 @@ class DefaultFirebaseOptions {
     appId: '${appId}',
     messagingSenderId: '${messagingSenderId}',
     projectId: '${projectId}',
-    storageBucket: '${projectId}-c1658.appspot.com',
+    storageBucket: '${storageBucket}',
+  );
+  static const FirebaseOptions ios = FirebaseOptions(
+    apiKey: '${apiKey}',
+    appId: '${appId}',
+    messagingSenderId: '${messagingSenderId}',
+    projectId: '${projectId}',
+    storageBucket: '${storageBucket}',
+    iosClientId: '${iosClientId}',
+    iosBundleId: '${iosBundleId}',
   );
 }
