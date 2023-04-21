@@ -57,6 +57,7 @@ final sipInfo = SipInfoData.fromJson({
       bundleId: '${bundle_id}',         // Example: com.pitel.uikit.demo
       domain: '${Domain}',
       extension: '${UUser}',
+      appMode: kReleaseMode ? 'production' : 'dev',
     );
   }
   
