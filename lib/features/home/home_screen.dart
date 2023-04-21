@@ -1,21 +1,26 @@
+import 'dart:io';
+
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_callkit_incoming/flutter_callkit_incoming.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import 'package:pitel_ui_kit/app.dart';
 import 'package:pitel_ui_kit/routing/app_router.dart';
 import 'package:plugin_pitel/component/pitel_call_state.dart';
 import 'package:plugin_pitel/component/sip_pitel_helper_listener.dart';
 import 'package:plugin_pitel/pitel_sdk/pitel_call.dart';
 import 'package:plugin_pitel/pitel_sdk/pitel_client.dart';
 import 'package:plugin_pitel/services/pitel_service.dart';
-import 'package:plugin_pitel/services/sip_info_data.dart';
 import 'package:plugin_pitel/sip/sip_ua.dart';
 import 'package:plugin_pitel/voip_push/push_notif.dart';
-import 'package:plugin_pitel/voip_push/voip_notif.dart';
+import 'package:is_lock_screen/is_lock_screen.dart';
 
 final checkIsPushNotif = StateProvider<bool>((ref) => false);
 
 class HomeScreen extends ConsumerStatefulWidget {
   final PitelCall _pitelCall = PitelClient.getInstance().pitelCall;
+
   HomeScreen({Key? key}) : super(key: key);
 
   @override
@@ -23,6 +28,7 @@ class HomeScreen extends ConsumerStatefulWidget {
 }
 
 class _MyHomeScreen extends ConsumerState<HomeScreen>
+    with WidgetsBindingObserver
     implements SipPitelHelperListener {
   // late String _dest;
   PitelCall get pitelCall => widget._pitelCall;
@@ -30,8 +36,11 @@ class _MyHomeScreen extends ConsumerState<HomeScreen>
 
   String receivedMsg = 'UNREGISTER';
   PitelClient pitelClient = PitelClient.getInstance();
+  final pitelService = PitelServiceImpl();
+
   String state = '';
   bool isLogin = false;
+  bool lockScreen = false;
 
   // INIT: Initialize state
   @override
@@ -41,13 +50,25 @@ class _MyHomeScreen extends ConsumerState<HomeScreen>
     receivedMsg = 'UNREGISTER';
     _bindEventListeners();
     _getDeviceToken();
-    VoipNotifService.listenerEvent(
-      callback: (event) {},
-      onCallAccept: () {
-        context.pushNamed(AppRoute.callScreen.name);
-      },
-      onCallDecline: () {},
-    );
+
+    WidgetsBinding.instance.addObserver(this);
+  }
+
+  @override
+  void dispose() {
+    WidgetsBinding.instance.removeObserver(this);
+    super.dispose();
+  }
+
+  @override
+  void didChangeAppLifecycleState(AppLifecycleState state) async {
+    super.didChangeAppLifecycleState(state);
+    if (state == AppLifecycleState.inactive) {
+      final isLock = await isLockScreen();
+      setState(() {
+        lockScreen = isLock ?? false;
+      });
+    }
   }
 
   void _getDeviceToken() async {
@@ -79,7 +100,11 @@ class _MyHomeScreen extends ConsumerState<HomeScreen>
   }
 
   @override
-  void callStateChanged(String callId, PitelCallState state) {}
+  void callStateChanged(String callId, PitelCallState state) {
+    if (state.state == PitelCallStateEnum.ENDED && lockScreen) {
+      FlutterCallkitIncoming.endAllCalls();
+    }
+  }
 
   @override
   void transportStateChanged(PitelTransportState state) {}
@@ -87,9 +112,13 @@ class _MyHomeScreen extends ConsumerState<HomeScreen>
   @override
   void onCallReceived(String callId) {
     pitelCall.setCallCurrent(callId);
-    //! Replace if you are using other State Managerment (Bloc, GetX,...)
-    final isPushNotif = ref.watch(checkIsPushNotif);
-    if (!isPushNotif) {
+    if (Platform.isIOS) {
+      pitelCall.answer();
+    }
+    if (Platform.isAndroid) {
+      context.pushNamed(AppRoute.callScreen.name);
+    }
+    if (!lockScreen) {
       context.pushNamed(AppRoute.callScreen.name);
     }
   }
@@ -143,6 +172,7 @@ class _MyHomeScreen extends ConsumerState<HomeScreen>
       bundleId: 'com.pitel.uikit.demo',
       domain: 'mobile.tel4vn.com',
       extension: '101',
+      appMode: kReleaseMode ? 'production' : 'dev',
     );
   }
 
@@ -185,25 +215,8 @@ class _MyHomeScreen extends ConsumerState<HomeScreen>
             : ElevatedButton(
                 onPressed: () {
                   // SIP INFO DATA: input Sip info config data
-                    final sipInfo = SipInfoData.fromJson({
-                        "authPass": "${Password}",
-                        "registerServer": "${Domain}",
-                        "outboundServer": "${Outbound Proxy}",
-                        "userID": UUser,                // Example 101
-                        "authID": UUser,                // Example 101
-                        "accountName": "${UUser}",      // Example 101
-                        "displayName": "${UUser}@${Domain}",
-                        "dialPlan": null,
-                        "randomPort": null,
-                        "voicemail": null,
-                        "wssUrl": "${URL WSS}",
-                        "userName": "${username}@${Domain}",
-                        "apiDomain": "${URL API}"
-                    });
-                  
-
                   final pitelClient = PitelServiceImpl();
-                  pitelClient.setExtensionInfo(sipInfo);
+                  pitelClient.setExtensionInfo(sipInfoData);
                   setState(() {
                     isLogin = true;
                   });

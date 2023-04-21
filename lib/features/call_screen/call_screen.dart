@@ -1,11 +1,11 @@
 import 'dart:async';
+import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_callkit_incoming/flutter_callkit_incoming.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:pitel_ui_kit/common_widgets/action_button.dart';
-import 'package:pitel_ui_kit/features/home/home_screen.dart';
 import 'package:plugin_pitel/component/pitel_call_state.dart';
 import 'package:plugin_pitel/component/pitel_rtc_video_view.dart';
 import 'package:plugin_pitel/component/sip_pitel_helper_listener.dart';
@@ -24,6 +24,7 @@ class CallScreenWidget extends ConsumerStatefulWidget {
 }
 
 class _MyCallScreenWidget extends ConsumerState<CallScreenWidget>
+    with WidgetsBindingObserver
     implements SipPitelHelperListener {
   PitelCall get pitelCall => widget._pitelCall;
 
@@ -42,11 +43,40 @@ class _MyCallScreenWidget extends ConsumerState<CallScreenWidget>
   @override
   initState() {
     super.initState();
+    WidgetsBinding.instance.addObserver(this);
+    handleCall();
+
     pitelCall.addListener(this);
     if (voiceonly) {
       _initRenderers();
     }
     _startTimer();
+  }
+
+  @override
+  void dispose() {
+    WidgetsBinding.instance.removeObserver(this);
+    super.dispose();
+  }
+
+  @override
+  void didChangeAppLifecycleState(AppLifecycleState state) async {
+    super.didChangeAppLifecycleState(state);
+    if (state == AppLifecycleState.resumed) {
+      if (!pitelCall.isConnected || !pitelCall.isHaveCall) {
+        // Navigate to your first screen
+        context.pop();
+      }
+    }
+  }
+
+  void handleCall() {
+    if (Platform.isAndroid) {
+      if (direction != 'OUTGOING') {
+        //! Answer when incoming call
+        pitelCall.answer();
+      }
+    }
   }
 
   // Deactive & Dispose when call end
@@ -105,12 +135,6 @@ class _MyCallScreenWidget extends ConsumerState<CallScreenWidget>
         break;
       case PitelCallStateEnum.ENDED:
       case PitelCallStateEnum.FAILED:
-        setState(() {
-          _callId = callId;
-        });
-        //! Replace if you are using other State Managerment (Bloc, GetX,...)
-        ref.read(checkIsPushNotif.notifier).state = false;
-        _backToDialPad();
         break;
       case PitelCallStateEnum.CONNECTING:
       case PitelCallStateEnum.PROGRESS:
@@ -138,11 +162,7 @@ class _MyCallScreenWidget extends ConsumerState<CallScreenWidget>
   void transportStateChanged(PitelTransportState state) {}
 
   @override
-  void onCallReceived(String callId) {
-    pitelCall.setCallCurrent(callId);
-    _handleAccept();
-    FlutterCallkitIncoming.endCall(callId);
-  }
+  void onCallReceived(String callId) {}
 
   @override
   void onCallInitiated(String callId) {}
@@ -150,6 +170,9 @@ class _MyCallScreenWidget extends ConsumerState<CallScreenWidget>
   // Back to Home screen
   void _backToDialPad() {
     if (mounted && !_isBacked) {
+      if (direction != 'OUTGOING') {
+        FlutterCallkitIncoming.endAllCalls();
+      }
       _isBacked = true;
       context.pop();
     }
@@ -161,11 +184,6 @@ class _MyCallScreenWidget extends ConsumerState<CallScreenWidget>
     if (_timer.isActive) {
       _timer.cancel();
     }
-  }
-
-  // Handle accept call
-  void _handleAccept() {
-    pitelCall.answer();
   }
 
   // Turn on/off speaker
@@ -180,8 +198,6 @@ class _MyCallScreenWidget extends ConsumerState<CallScreenWidget>
     var hangupBtn = ActionButton(
       title: "hangup",
       onPressed: () {
-        //! Replace if you are using other State Managerment (Bloc, GetX,...)
-        ref.read(checkIsPushNotif.notifier).state = false;
         _handleHangup();
         _backToDialPad();
       },
@@ -201,17 +217,7 @@ class _MyCallScreenWidget extends ConsumerState<CallScreenWidget>
     switch (_state) {
       case PitelCallStateEnum.NONE:
       case PitelCallStateEnum.PROGRESS:
-        if (direction == 'INCOMING') {
-          basicActions = [
-            ActionButton(
-              title: "Accept",
-              fillColor: Colors.green,
-              icon: Icons.phone,
-              onPressed: () => _handleAccept(),
-            ),
-            hangupBtn
-          ];
-        } else {
+        if (direction == 'OUTGOING') {
           basicActions = [hangupBtn];
         }
         break;
