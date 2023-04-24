@@ -40,19 +40,10 @@ class DefaultFirebaseOptions {
 
   //! Replace information from your google_service.json
   static const FirebaseOptions android = FirebaseOptions(
-    apiKey: '${apiKey}',
-    appId: '${appId}',
-    messagingSenderId: '${messagingSenderId}',
-    projectId: '${projectId}',
-    storageBucket: '${storageBucket}',
-  );
-  static const FirebaseOptions ios = FirebaseOptions(
-    apiKey: '${apiKey}',
-    appId: '${appId}',
-    messagingSenderId: '${messagingSenderId}',
-    projectId: '${projectId}',
-    storageBucket: '${storageBucket}',
-    iosClientId: '${iosClientId}',
-    iosBundleId: '${iosBundleId}',
+    apiKey: 'AIzaSyAgOjAw2nFu0pwNO2zSjtr7QzTR2dTdJIg',
+    appId: '1:476014117271:android:cc7e37aac88f2a150e04d2',
+    messagingSenderId: '476014117271',
+    projectId: 'carcrm-57969',
+    storageBucket: 'carcrm-57969.appspot.com',
   );
 }

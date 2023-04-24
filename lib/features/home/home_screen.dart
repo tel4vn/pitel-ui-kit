@@ -73,7 +73,9 @@ class _MyHomeScreen extends ConsumerState<HomeScreen>
 
   void _getDeviceToken() async {
     final deviceToken = await PushVoipNotif.getDeviceToken();
+    print('================deviceToken================');
     print(deviceToken);
+    print('==================================');
   }
 
   @override
@@ -167,21 +169,22 @@ class _MyHomeScreen extends ConsumerState<HomeScreen>
   void _registerDeviceToken() async {
     final response = await pitelClient.registerDeviceToken(
       deviceToken:
-          '56357b057da09ba1c8a069c06a0f0232f7a1d80bf743f757c290a20b42dce55c',
-      platform: 'ios',
-      bundleId: 'com.pitel.uikit.demo',
-      domain: 'mobile.tel4vn.com',
-      extension: '101',
-      appMode: kReleaseMode ? 'production' : 'dev',
+          'dHidRX9dS4W73kgngkhVj3:APA91bERjZ1swvo2wLfCcU58XrLwovGhWACmPrhDCguIWjJCd9YEVWmPwifnbb2K0WhCVik7b3lTIY6NFxruly3Juj__AfCO3zTnbffHKYPbr5ll0AfSK8HCx9NEAy0TlZ_wHGNCgcL8',
+      platform: 'android',
+      bundleId: 'vn.gen_crm',
+      domain: 'demo-gencrm.com',
+      extension: '102',
+      // appMode: kReleaseMode ? 'production' : 'dev',
+      appMode: 'dev',
     );
   }
 
   void _removeDeviceToken() async {
     final response = await pitelClient.removeDeviceToken(
       deviceToken:
-          '56357b057da09ba1c8a069c06a0f0232f7a1d80bf743f757c290a20b42dce55c',
-      domain: 'mobile.tel4vn.com',
-      extension: '101',
+          'dHidRX9dS4W73kgngkhVj3:APA91bERjZ1swvo2wLfCcU58XrLwovGhWACmPrhDCguIWjJCd9YEVWmPwifnbb2K0WhCVik7b3lTIY6NFxruly3Juj__AfCO3zTnbffHKYPbr5ll0AfSK8HCx9NEAy0TlZ_wHGNCgcL8',
+      domain: 'demo-gencrm.com',
+      extension: '102',
     );
   }
 

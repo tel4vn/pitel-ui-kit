@@ -10,19 +10,19 @@ import 'package:plugin_pitel/services/sip_info_data.dart';
 import 'package:plugin_pitel/voip_push/voip_notif.dart';
 
 final sipInfoData = SipInfoData.fromJson({
-    "authPass": "${Password}",
-    "registerServer": "${Domain}",
-    "outboundServer": "${Outbound Proxy}",
-    "userID": UUser,                // Example 101
-    "authID": UUser,                // Example 101
-    "accountName": "${UUser}",      // Example 101
-    "displayName": "${UUser}@${Domain}",
-    "dialPlan": null,
-    "randomPort": null,
-    "voicemail": null,
-    "wssUrl": "${URL WSS}",
-    "userName": "${username}@${Domain}",
-    "apiDomain": "${URL API}"
+  "authPass": "GenCRM@2023##",
+  "registerServer": "demo-gencrm.com",
+  "outboundServer": "pbx-mobile.tel4vn.com:50061",
+  "userID": 102, // Example 101
+  "authID": 102, // Example 101
+  "accountName": "102", // Example 101
+  "displayName": "102@demo-gencrm.com",
+  "dialPlan": null,
+  "randomPort": null,
+  "voicemail": null,
+  "wssUrl": "wss://wss-mobile.tel4vn.com:7444",
+  "userName": "user1@demo-gencrm.com",
+  "apiDomain": "https://api-mobile.tel4vn.com"
 });
 
 class MyApp extends StatefulWidget {
