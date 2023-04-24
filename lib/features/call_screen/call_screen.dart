@@ -6,6 +6,7 @@ import 'package:flutter_callkit_incoming/flutter_callkit_incoming.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:pitel_ui_kit/common_widgets/action_button.dart';
+import 'package:pitel_ui_kit/routing/app_router.dart';
 import 'package:plugin_pitel/component/pitel_call_state.dart';
 import 'package:plugin_pitel/component/pitel_rtc_video_view.dart';
 import 'package:plugin_pitel/component/sip_pitel_helper_listener.dart';
@@ -65,7 +66,7 @@ class _MyCallScreenWidget extends ConsumerState<CallScreenWidget>
     if (state == AppLifecycleState.resumed) {
       if (!pitelCall.isConnected || !pitelCall.isHaveCall) {
         // Navigate to your first screen
-        context.pop();
+        context.pushNamed(AppRoute.home.name);
       }
     }
   }
@@ -174,7 +175,7 @@ class _MyCallScreenWidget extends ConsumerState<CallScreenWidget>
         FlutterCallkitIncoming.endAllCalls();
       }
       _isBacked = true;
-      context.pop();
+      context.pushNamed(AppRoute.home.name);
     }
   }
 
