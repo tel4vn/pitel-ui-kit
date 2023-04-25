@@ -68,6 +68,10 @@ class _MyCallScreenWidget extends ConsumerState<CallScreenWidget>
         // Navigate to your first screen
         context.pushNamed(AppRoute.home.name);
       }
+      if (pitelCall.direction == null && _state == PitelCallStateEnum.NONE) {
+        // Navigate to your first screen
+        context.pushNamed(AppRoute.home.name);
+      }
     }
   }
 

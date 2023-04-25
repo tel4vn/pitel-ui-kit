@@ -103,7 +103,7 @@ class _MyHomeScreen extends ConsumerState<HomeScreen>
 
   @override
   void callStateChanged(String callId, PitelCallState state) {
-    if (state.state == PitelCallStateEnum.ENDED && lockScreen) {
+    if (state.state == PitelCallStateEnum.ENDED) {
       FlutterCallkitIncoming.endAllCalls();
     }
   }

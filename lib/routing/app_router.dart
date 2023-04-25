@@ -5,6 +5,7 @@ import 'package:pitel_ui_kit/features/home/home_screen.dart';
 enum AppRoute { scan, home, callScreen }
 
 final GoRouter router = GoRouter(
+  initialLocation: '/',
   debugLogDiagnostics: false,
   routes: [
     GoRoute(
