@@ -164,24 +164,24 @@ class _MyHomeScreen extends ConsumerState<HomeScreen>
     pitelCall.unregister();
   }
 
-  void _registerDeviceToken() async {
+ // Register Device token when SIP register success (state REGISTER)
+ void _registerDeviceToken() async {
     final response = await pitelClient.registerDeviceToken(
-      deviceToken:
-          '56357b057da09ba1c8a069c06a0f0232f7a1d80bf743f757c290a20b42dce55c',
-      platform: 'ios',
-      bundleId: 'com.pitel.uikit.demo',
-      domain: 'mobile.tel4vn.com',
-      extension: '101',
+      deviceToken: "${device_token}",
+      platform: '${platform}',          // android or ios
+      bundleId: '${bundle_id}',         // Example: com.pitel.uikit.demo
+      domain: '${Domain}',
+      extension: '${UUser}',
       appMode: kReleaseMode ? 'production' : 'dev',
     );
   }
-
+  
+  // Remove Device token when user logout (state UNREGISTER)
   void _removeDeviceToken() async {
     final response = await pitelClient.removeDeviceToken(
-      deviceToken:
-          '56357b057da09ba1c8a069c06a0f0232f7a1d80bf743f757c290a20b42dce55c',
-      domain: 'mobile.tel4vn.com',
-      extension: '101',
+      deviceToken: '${device_token}',
+      domain: '${Domain}',
+      extension: '${UUser}',
     );
   }
 
