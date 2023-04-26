@@ -15,6 +15,16 @@
             // ]
         },
         {
+            "name": "Dev release",
+            "request": "launch",
+            "type": "dart",
+            "flutterMode": "release",
+            // "args": [
+            //     "--flavor",
+            //     "Dev",
+            // ]
+        },
+        {
             "name": "Prod",
             "request": "launch",
             "type": "dart",
