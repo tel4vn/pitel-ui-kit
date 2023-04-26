@@ -106,6 +106,9 @@ class _MyHomeScreen extends ConsumerState<HomeScreen>
     if (state.state == PitelCallStateEnum.ENDED) {
       FlutterCallkitIncoming.endAllCalls();
     }
+    if (state.state == PitelCallStateEnum.STREAM) {
+      state.stream?.getAudioTracks().first.enableSpeakerphone(false);
+    }
   }
 
   @override
@@ -169,7 +172,7 @@ class _MyHomeScreen extends ConsumerState<HomeScreen>
   void _registerDeviceToken() async {
     final response = await pitelClient.registerDeviceToken(
       deviceToken:
-          'dHidRX9dS4W73kgngkhVj3:APA91bERjZ1swvo2wLfCcU58XrLwovGhWACmPrhDCguIWjJCd9YEVWmPwifnbb2K0WhCVik7b3lTIY6NFxruly3Juj__AfCO3zTnbffHKYPbr5ll0AfSK8HCx9NEAy0TlZ_wHGNCgcL8',
+          'dJR78Z2nQwW5JZ9_EIwzM5:APA91bGyjWlgJ6rrBceOUP4r228gvuTf9NPI8-0awVWgVG6RuYHRxgIfHsJR4YdLA0rmHjUjit3ITRw7nXwQ9cXYaPI2J0u6dGWRoSrbraiF4g4qf8VvshNqcOa5myUeWd_ETIk3eJ0a',
       platform: 'android',
       bundleId: 'vn.gen_crm',
       domain: 'demo-gencrm.com',
@@ -205,6 +208,11 @@ class _MyHomeScreen extends ConsumerState<HomeScreen>
               style: const TextStyle(
                   fontSize: 18, fontWeight: FontWeight.bold, color: Colors.red),
             )),
+        TextButton(
+            onPressed: () {
+              context.pushNamed(AppRoute.callScreen.name);
+            },
+            child: Text('Navigate')),
         isLogin
             ? TextButton(
                 onPressed: _logout,
