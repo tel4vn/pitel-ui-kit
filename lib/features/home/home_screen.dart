@@ -101,7 +101,7 @@ class _MyHomeScreen extends ConsumerState<HomeScreen>
 
   @override
   void callStateChanged(String callId, PitelCallState state) {
-    if (state.state == PitelCallStateEnum.ENDED && lockScreen) {
+    if (state.state == PitelCallStateEnum.ENDED) {
       FlutterCallkitIncoming.endAllCalls();
     }
   }
@@ -164,18 +164,18 @@ class _MyHomeScreen extends ConsumerState<HomeScreen>
     pitelCall.unregister();
   }
 
- // Register Device token when SIP register success (state REGISTER)
- void _registerDeviceToken() async {
+  // Register Device token when SIP register success (state REGISTER)
+  void _registerDeviceToken() async {
     final response = await pitelClient.registerDeviceToken(
       deviceToken: "${device_token}",
-      platform: '${platform}',          // android or ios
-      bundleId: '${bundle_id}',         // Example: com.pitel.uikit.demo
+      platform: '${platform}', // android or ios
+      bundleId: '${bundle_id}', // Example: com.pitel.uikit.demo
       domain: '${Domain}',
       extension: '${UUser}',
       appMode: kReleaseMode ? 'production' : 'dev',
     );
   }
-  
+
   // Remove Device token when user logout (state UNREGISTER)
   void _removeDeviceToken() async {
     final response = await pitelClient.removeDeviceToken(
