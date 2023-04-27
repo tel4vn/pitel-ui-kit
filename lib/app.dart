@@ -5,6 +5,7 @@ import 'package:pitel_ui_kit/routing/app_router.dart';
 import 'package:plugin_pitel/component/app_life_cycle/app_life_cycle.dart';
 import 'package:plugin_pitel/pitel_sdk/pitel_call.dart';
 import 'package:plugin_pitel/pitel_sdk/pitel_client.dart';
+import 'package:plugin_pitel/services/models/pn_push_params.dart';
 import 'package:plugin_pitel/services/pitel_service.dart';
 import 'package:plugin_pitel/services/sip_info_data.dart';
 import 'package:plugin_pitel/voip_push/voip_notif.dart';
@@ -43,7 +44,8 @@ class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
       callback: (event) {},
       onCallAccept: () {
         //! Re-register when user accept call
-        pitelService.setExtensionInfo(sipInfoData);
+        // pitelService.setExtensionInfo(sipInfoData);
+        handleRegister();
       },
       onCallDecline: () {},
       onCallEnd: () {
@@ -68,8 +70,16 @@ class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
   }
 
   void handleRegister() {
-    pitelService.setExtensionInfo(sipInfoData);
+    final pnPushParams = PnPushParams(
+      pnProvider: Platform.isAndroid ? 'fcm' : 'apns',
+      pnParam: Platform.isAndroid
+          ? '${bundleId}' // Example com.company.app
+          : '${apple_team_id}.${bundleId}.voip', // Example com.company.app
+      pnPrid: '${deviceToken}',
+    );
+    pitelService.setExtensionInfo(sipInfoData, pnPushParams);
   }
+  
 
   @override
   Widget build(BuildContext context) {
