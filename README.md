@@ -46,6 +46,7 @@ final sipInfoData = SipInfoData.fromJson({
     "userName": "${username}@${Domain}",
     "apiDomain": "${URL API}"
 });
+```
 - In file ```app.dart``` fill sip info data 
 ```dart
   final pnPushParams = PnPushParams(
