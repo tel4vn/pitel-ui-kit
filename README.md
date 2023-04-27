@@ -57,7 +57,6 @@ final sipInfoData = SipInfoData.fromJson({
   );
   pitelService.setExtensionInfo(sipInfoData, pnPushParams);
 ```
-```
 - In file ```home_screen.dart``` please enter the information for sending notifications.
 ```dart
  // Register Device token when SIP register success (state REGISTER)
