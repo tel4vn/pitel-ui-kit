@@ -29,9 +29,9 @@ pitel_ui_kit is demo project.
     iosBundleId: '${iosBundleId}',
   );
 ```
-- In file ```home_screen.dart``` fill sip info data 
+- In file ```app.dart``` fill sip info data 
 ```dart
-final sipInfo = SipInfoData.fromJson({
+final sipInfoData = SipInfoData.fromJson({
     "authPass": "${Password}",
     "registerServer": "${Domain}",
     "outboundServer": "${Outbound Proxy}",
@@ -46,6 +46,17 @@ final sipInfo = SipInfoData.fromJson({
     "userName": "${username}@${Domain}",
     "apiDomain": "${URL API}"
 });
+- In file ```app.dart``` fill sip info data 
+```dart
+  final pnPushParams = PnPushParams(
+      pnProvider: Platform.isAndroid ? 'fcm' : 'apns',
+      pnParam: Platform.isAndroid
+          ? '${bundleId}'                         // Example com.company.app
+          : '${apple_team_id}.${bundleId}.voip',  // Example com.company.app
+      pnPrid: '${deviceToken}',
+  );
+  pitelService.setExtensionInfo(sipInfoData, pnPushParams);
+```
 ```
 - In file ```home_screen.dart``` please enter the information for sending notifications.
 ```dart
