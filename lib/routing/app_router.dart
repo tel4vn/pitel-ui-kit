@@ -1,8 +1,14 @@
 import 'package:go_router/go_router.dart';
+import 'package:pitel_ui_kit/features/call_screen/call_page.dart';
 import 'package:pitel_ui_kit/features/call_screen/call_screen.dart';
 import 'package:pitel_ui_kit/features/home/home_screen.dart';
 
-enum AppRoute { scan, home, callScreen }
+enum AppRoute {
+  scan,
+  home,
+  callScreen,
+  callPage,
+}
 
 final GoRouter router = GoRouter(
   debugLogDiagnostics: false,
@@ -17,6 +23,13 @@ final GoRouter router = GoRouter(
           name: AppRoute.callScreen.name,
           builder: (context, state) {
             return CallScreenWidget();
+          },
+        ),
+        GoRoute(
+          path: 'call_page',
+          name: AppRoute.callPage.name,
+          builder: (context, state) {
+            return CallPage();
           },
         ),
       ],

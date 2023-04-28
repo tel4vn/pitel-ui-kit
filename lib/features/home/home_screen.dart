@@ -5,10 +5,12 @@ import 'package:flutter/material.dart';
 import 'package:flutter_callkit_incoming/flutter_callkit_incoming.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import 'package:package_info_plus/package_info_plus.dart';
 import 'package:pitel_ui_kit/app.dart';
 import 'package:pitel_ui_kit/routing/app_router.dart';
 import 'package:plugin_pitel/component/pitel_call_state.dart';
 import 'package:plugin_pitel/component/sip_pitel_helper_listener.dart';
+import 'package:plugin_pitel/flutter_pitel_voip.dart';
 import 'package:plugin_pitel/pitel_sdk/pitel_call.dart';
 import 'package:plugin_pitel/pitel_sdk/pitel_client.dart';
 import 'package:plugin_pitel/services/pitel_service.dart';
@@ -41,7 +43,6 @@ class _MyHomeScreen extends ConsumerState<HomeScreen>
   String state = '';
   bool isLogin = false;
   bool lockScreen = false;
-
   // INIT: Initialize state
   @override
   initState() {
@@ -72,8 +73,7 @@ class _MyHomeScreen extends ConsumerState<HomeScreen>
   }
 
   void _getDeviceToken() async {
-    final deviceToken = await PushVoipNotif.getDeviceToken();
-    print(deviceToken);
+    final deviceTokenRes = await PushVoipNotif.getDeviceToken();
   }
 
   @override
@@ -119,17 +119,17 @@ class _MyHomeScreen extends ConsumerState<HomeScreen>
       pitelCall.answer();
     }
     if (Platform.isAndroid) {
-      context.pushNamed(AppRoute.callScreen.name);
+      context.pushNamed(AppRoute.callPage.name);
     }
     if (!lockScreen) {
-      context.pushNamed(AppRoute.callScreen.name);
+      context.pushNamed(AppRoute.callPage.name);
     }
   }
 
   @override
   void onCallInitiated(String callId) {
     pitelCall.setCallCurrent(callId);
-    context.pushNamed(AppRoute.callScreen.name);
+    context.pushNamed(AppRoute.callPage.name);
   }
 
   // ACTION: call device if register success
@@ -168,23 +168,45 @@ class _MyHomeScreen extends ConsumerState<HomeScreen>
   }
 
   // Register Device token when SIP register success (state REGISTER)
+  // void _registerDeviceToken() async {
+  //   final response = await pitelClient.registerDeviceToken(
+  //     deviceToken: "${device_token}",
+  //     platform: '${platform}', // android or ios
+  //     bundleId: '${bundle_id}', // Example: com.pitel.uikit.demo
+  //     domain: '${Domain}',
+  //     extension: '${UUser}',
+  //     appMode: kReleaseMode ? 'production' : 'dev',
+  //   );
+  // }
   void _registerDeviceToken() async {
+    final PackageInfo packageInfo = await PackageInfo.fromPlatform();
+    final deviceTokenRes = await PushVoipNotif.getDeviceToken();
+
     final response = await pitelClient.registerDeviceToken(
-      deviceToken: "${device_token}",
-      platform: '${platform}', // android or ios
-      bundleId: '${bundle_id}', // Example: com.pitel.uikit.demo
-      domain: '${Domain}',
-      extension: '${UUser}',
+      deviceToken: deviceTokenRes,
+      platform: Platform.isIOS ? 'ios' : 'android',
+      bundleId: packageInfo.packageName,
+      domain: sipInfoData.registerServer,
+      extension: sipInfoData.userID.toString(),
       appMode: kReleaseMode ? 'production' : 'dev',
     );
   }
 
   // Remove Device token when user logout (state UNREGISTER)
+  // void _removeDeviceToken() async {
+  //   final response = await pitelClient.removeDeviceToken(
+  //     deviceToken: '${device_token}',
+  //     domain: '${Domain}',
+  //     extension: '${UUser}',
+  //   );
+  // }
   void _removeDeviceToken() async {
+    final deviceTokenRes = await PushVoipNotif.getDeviceToken();
+
     final response = await pitelClient.removeDeviceToken(
-      deviceToken: '${device_token}',
-      domain: '${Domain}',
-      extension: '${UUser}',
+      deviceToken: deviceTokenRes,
+      domain: sipInfoData.registerServer,
+      extension: sipInfoData.userID.toString(),
     );
   }
 
@@ -216,10 +238,19 @@ class _MyHomeScreen extends ConsumerState<HomeScreen>
                   ),
                 ))
             : ElevatedButton(
-                onPressed: () {
+                onPressed: () async {
                   // SIP INFO DATA: input Sip info config data
+                  final PackageInfo packageInfo =
+                      await PackageInfo.fromPlatform();
+                  final pnPushParams = PnPushParams(
+                    pnProvider: Platform.isAndroid ? 'fcm' : 'apns',
+                    pnParam: Platform.isAndroid
+                        ? packageInfo.packageName
+                        : 'XP2BMU4626.${packageInfo.packageName}.voip',
+                    pnPrid: deviceToken,
+                  );
                   final pitelClient = PitelServiceImpl();
-                  pitelClient.setExtensionInfo(sipInfoData);
+                  pitelClient.setExtensionInfo(sipInfoData, pnPushParams);
                   setState(() {
                     isLogin = true;
                   });

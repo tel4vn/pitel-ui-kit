@@ -39,20 +39,38 @@ class DefaultFirebaseOptions {
   }
 
   //! Replace information from your google_service.json
+  // static const FirebaseOptions android = FirebaseOptions(
+  //   apiKey: '${apiKey}',
+  //   appId: '${appId}',
+  //   messagingSenderId: '${messagingSenderId}',
+  //   projectId: '${projectId}',
+  //   storageBucket: '${storageBucket}',
+  // );
+  // static const FirebaseOptions ios = FirebaseOptions(
+  //   apiKey: '${apiKey}',
+  //   appId: '${appId}',
+  //   messagingSenderId: '${messagingSenderId}',
+  //   projectId: '${projectId}',
+  //   storageBucket: '${storageBucket}',
+  //   iosClientId: '${iosClientId}',
+  //   iosBundleId: '${iosBundleId}',
+  // );
   static const FirebaseOptions android = FirebaseOptions(
-    apiKey: '${apiKey}',
-    appId: '${appId}',
-    messagingSenderId: '${messagingSenderId}',
-    projectId: '${projectId}',
-    storageBucket: '${storageBucket}',
+    apiKey: 'AIzaSyD3wdf4PtTeFrxO74h1lNmLEBcmIZzOavA',
+    appId: '1:1083920495761:android:2222871fbe24e661557b30',
+    messagingSenderId: '1083920495761',
+    projectId: 'pitel-87bff',
+    storageBucket: 'pitel-87bff.appspot.com',
   );
+
   static const FirebaseOptions ios = FirebaseOptions(
-    apiKey: '${apiKey}',
-    appId: '${appId}',
-    messagingSenderId: '${messagingSenderId}',
-    projectId: '${projectId}',
-    storageBucket: '${storageBucket}',
-    iosClientId: '${iosClientId}',
-    iosBundleId: '${iosBundleId}',
+    apiKey: 'AIzaSyBSzq9aNB7-xg8iOOM_GGBGwBrPVMiFMMU',
+    appId: '1:1083920495761:ios:c4102bc62237b847557b30',
+    messagingSenderId: '1083920495761',
+    projectId: 'pitel-87bff',
+    storageBucket: 'pitel-87bff.appspot.com',
+    iosClientId:
+        '1083920495761-rmajidk714dc3jp895dt23c10cnr0qfv.apps.googleusercontent.com',
+    iosBundleId: 'com.pitel.pitelconnect',
   );
 }

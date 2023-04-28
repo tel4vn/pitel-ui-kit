@@ -1,8 +1,11 @@
+import 'dart:developer';
 import 'dart:io';
 
 import 'package:flutter/material.dart';
+import 'package:package_info_plus/package_info_plus.dart';
 import 'package:pitel_ui_kit/routing/app_router.dart';
 import 'package:plugin_pitel/component/app_life_cycle/app_life_cycle.dart';
+import 'package:plugin_pitel/flutter_pitel_voip.dart';
 import 'package:plugin_pitel/pitel_sdk/pitel_call.dart';
 import 'package:plugin_pitel/pitel_sdk/pitel_client.dart';
 import 'package:plugin_pitel/services/models/pn_push_params.dart';
@@ -42,6 +45,8 @@ final sipInfoData = SipInfoData.fromJson({
   "apiDomain": "https://api-mobile.tel4vn.com"
 });
 
+const String deviceToken = '';
+
 class MyApp extends StatefulWidget {
   const MyApp({Key? key}) : super(key: key);
 
@@ -78,14 +83,16 @@ class _MyAppState extends State<MyApp> {
     //   pnPrid: '${deviceToken}',
     // );
     final PackageInfo packageInfo = await PackageInfo.fromPlatform();
+    final deviceTokenRes = await PushVoipNotif.getDeviceToken();
 
     final pnPushParams = PnPushParams(
       pnProvider: Platform.isAndroid ? 'fcm' : 'apns',
       pnParam: Platform.isAndroid
           ? packageInfo.packageName
           : 'XP2BMU4626.${packageInfo.packageName}.voip',
-      pnPrid: deviceToken,
+      pnPrid: deviceTokenRes,
     );
+    inspect(pnPushParams);
     pitelService.setExtensionInfo(sipInfoData, pnPushParams);
   }
 
