@@ -104,6 +104,9 @@ class _MyHomeScreen extends ConsumerState<HomeScreen>
     if (state.state == PitelCallStateEnum.ENDED) {
       FlutterCallkitIncoming.endAllCalls();
     }
+    if (state.state == PitelCallStateEnum.STREAM) {
+      pitelCall.enableSpeakerphone(false);
+    }
   }
 
   @override
