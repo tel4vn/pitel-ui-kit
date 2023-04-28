@@ -8,14 +8,7 @@ import 'package:go_router/go_router.dart';
 import 'package:package_info_plus/package_info_plus.dart';
 import 'package:pitel_ui_kit/app.dart';
 import 'package:pitel_ui_kit/routing/app_router.dart';
-import 'package:plugin_pitel/component/pitel_call_state.dart';
-import 'package:plugin_pitel/component/sip_pitel_helper_listener.dart';
 import 'package:plugin_pitel/flutter_pitel_voip.dart';
-import 'package:plugin_pitel/pitel_sdk/pitel_call.dart';
-import 'package:plugin_pitel/pitel_sdk/pitel_client.dart';
-import 'package:plugin_pitel/services/pitel_service.dart';
-import 'package:plugin_pitel/sip/sip_ua.dart';
-import 'package:plugin_pitel/voip_push/push_notif.dart';
 import 'package:is_lock_screen/is_lock_screen.dart';
 
 final checkIsPushNotif = StateProvider<bool>((ref) => false);

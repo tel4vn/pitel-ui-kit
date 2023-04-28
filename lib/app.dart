@@ -4,46 +4,24 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:package_info_plus/package_info_plus.dart';
 import 'package:pitel_ui_kit/routing/app_router.dart';
-import 'package:plugin_pitel/component/app_life_cycle/app_life_cycle.dart';
 import 'package:plugin_pitel/flutter_pitel_voip.dart';
-import 'package:plugin_pitel/pitel_sdk/pitel_call.dart';
-import 'package:plugin_pitel/pitel_sdk/pitel_client.dart';
-import 'package:plugin_pitel/services/models/pn_push_params.dart';
-import 'package:plugin_pitel/services/pitel_service.dart';
-import 'package:plugin_pitel/services/sip_info_data.dart';
-import 'package:plugin_pitel/voip_push/voip_notif.dart';
-
-// final sipInfoData = SipInfoData.fromJson({
-//   "authPass": "${Password}",
-//   "registerServer": "${Domain}",
-//   "outboundServer": "${Outbound Proxy}",
-//   "userID": UUser,                // Example 101
-//   "authID": UUser,                // Example 101
-//   "accountName": "${UUser}",      // Example 101
-//   "displayName": "${UUser}@${Domain}",
-//   "dialPlan": null,
-//   "randomPort": null,
-//   "voicemail": null,
-//   "wssUrl": "${URL WSS}",
-//   "userName": "${username}@${Domain}",
-//   "apiDomain": "${URL API}"
-// });
 
 final sipInfoData = SipInfoData.fromJson({
-  "authPass": "Tel4vn.com@2023",
-  "registerServer": "mobile.tel4vn.com",
-  "outboundServer": "pbx-mobile.tel4vn.com:50061",
-  "userID": 104,
-  "authID": 104,
-  "accountName": "104",
-  "displayName": "104@mobile.tel4vn.com",
+  "authPass": "${Password}",
+  "registerServer": "${Domain}",
+  "outboundServer": "${Outbound Proxy}",
+  "userID": UUser,                // Example 101
+  "authID": UUser,                // Example 101
+  "accountName": "${UUser}",      // Example 101
+  "displayName": "${UUser}@${Domain}",
   "dialPlan": null,
   "randomPort": null,
   "voicemail": null,
-  "wssUrl": "wss://wss-mobile.tel4vn.com:7444",
-  "userName": "user4@mobile.tel4vn.com",
-  "apiDomain": "https://api-mobile.tel4vn.com"
+  "wssUrl": "${URL WSS}",
+  "userName": "${username}@${Domain}",
+  "apiDomain": "${URL API}"
 });
+
 
 const String deviceToken = '';
 
@@ -75,24 +53,17 @@ class _MyAppState extends State<MyApp> {
   }
 
   void handleRegister() async {
-    // final pnPushParams = PnPushParams(
-    //   pnProvider: Platform.isAndroid ? 'fcm' : 'apns',
-    //   pnParam: Platform.isAndroid
-    //       ? '${bundleId}' // Example com.company.app
-    //       : '${apple_team_id}.${bundleId}.voip', // Example com.company.app
-    //   pnPrid: '${deviceToken}',
-    // );
     final PackageInfo packageInfo = await PackageInfo.fromPlatform();
     final deviceTokenRes = await PushVoipNotif.getDeviceToken();
 
     final pnPushParams = PnPushParams(
       pnProvider: Platform.isAndroid ? 'fcm' : 'apns',
       pnParam: Platform.isAndroid
-          ? packageInfo.packageName
-          : 'XP2BMU4626.${packageInfo.packageName}.voip',
+          ? '${bundleId}'                         // Example com.company.app
+          : '${apple_team_id}.${bundleId}.voip',  // Example com.company.app
       pnPrid: deviceTokenRes,
     );
-    inspect(pnPushParams);
+
     pitelService.setExtensionInfo(sipInfoData, pnPushParams);
   }
 

@@ -61,8 +61,7 @@ import flutter_callkit_incoming
         print("didReceiveIncomingPushWith")
         guard type == .voIP else { return }
         
-//        let id = payload.dictionaryPayload["id"] as? String ?? ""
-        let id = "44d915e1-5ff4-4bed-bf13-c423048ec97a";
+        let id = payload.dictionaryPayload["uuid"] as? String ?? NSUUID().uuidString
         let nameCaller = payload.dictionaryPayload["nameCaller"] as? String ?? ""
         let handle = payload.dictionaryPayload["handle"] as? String ?? ""
         let isVideo = payload.dictionaryPayload["isVideo"] as? Bool ?? false
