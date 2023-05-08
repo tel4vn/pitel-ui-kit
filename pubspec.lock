@@ -109,10 +109,10 @@ packages:
     dependency: transitive
     description:
       name: dart_webrtc
-      sha256: "5d53ae883f314016b822ec498e54dd437c84a71ae2162a243aeb0162deb85158"
+      sha256: e3d2bef2e561f062aacc3894dcac7e346d5435fcade9eefd6a800af1a7802cb0
       url: "https://pub.dev"
     source: hosted
-    version: "1.0.12"
+    version: "1.0.11"
   dartz:
     dependency: transitive
     description:
@@ -246,14 +246,6 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "2.3.4"
-  flutter_svg:
-    dependency: transitive
-    description:
-      name: flutter_svg
-      sha256: f991fdb1533c3caeee0cdc14b04f50f0c3916f0dbcbc05237ccbe4e3c6b93f3f
-      url: "https://pub.dev"
-    source: hosted
-    version: "2.0.5"
   flutter_test:
     dependency: "direct dev"
     description: flutter
@@ -268,10 +260,10 @@ packages:
     dependency: transitive
     description:
       name: flutter_webrtc
-      sha256: d1d3f44e65b360eef4e6a89cbdd6c05525a3217796cb087b535ced1afcd4b124
+      sha256: "005b7b03c62398a00870bf639f8b913b3adb9fc7556ef33408684f3ebe7e3b0d"
       url: "https://pub.dev"
     source: hosted
-    version: "0.9.18"
+    version: "0.9.17"
   go_router:
     dependency: "direct main"
     description:
@@ -424,14 +416,6 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "1.8.2"
-  path_parsing:
-    dependency: transitive
-    description:
-      name: path_parsing
-      sha256: e3e67b1629e6f7e8100b367d3db6ba6af4b1f0bb80f64db18ef1fbabd2fa9ccf
-      url: "https://pub.dev"
-    source: hosted
-    version: "1.0.1"
   path_provider:
     dependency: transitive
     description:
@@ -504,14 +488,6 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "3.1.0"
-  platform_detect:
-    dependency: transitive
-    description:
-      name: platform_detect
-      sha256: "14afcb6ffcd93745e39a288db53d1d6522ea25d71f7993c13a367a86c437b54d"
-      url: "https://pub.dev"
-    source: hosted
-    version: "2.0.7"
   plugin_pitel:
     dependency: "direct main"
     description:
@@ -543,14 +519,6 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "4.2.4"
-  pub_semver:
-    dependency: transitive
-    description:
-      name: pub_semver
-      sha256: "816c1a640e952d213ddd223b3e7aafae08cd9f8e1f6864eed304cc13b0272b07"
-      url: "https://pub.dev"
-    source: hosted
-    version: "2.1.1"
   random_string:
     dependency: transitive
     description:
@@ -676,30 +644,6 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "3.0.7"
-  vector_graphics:
-    dependency: transitive
-    description:
-      name: vector_graphics
-      sha256: ea8d3fc7b2e0f35de38a7465063ecfcf03d8217f7962aa2a6717132cb5d43a79
-      url: "https://pub.dev"
-    source: hosted
-    version: "1.1.5"
-  vector_graphics_codec:
-    dependency: transitive
-    description:
-      name: vector_graphics_codec
-      sha256: a5eaa5d19e123ad4f61c3718ca1ed921c4e6254238d9145f82aa214955d9aced
-      url: "https://pub.dev"
-    source: hosted
-    version: "1.1.5"
-  vector_graphics_compiler:
-    dependency: transitive
-    description:
-      name: vector_graphics_compiler
-      sha256: "15edc42f7eaa478ce854eaf1fbb9062a899c0e4e56e775dd73b7f4709c97c4ca"
-      url: "https://pub.dev"
-    source: hosted
-    version: "1.1.5"
   vector_math:
     dependency: transitive
     description:
@@ -749,5 +693,5 @@ packages:
     source: hosted
     version: "3.1.1"
 sdks:
-  dart: ">=2.19.0 <3.0.0"
-  flutter: ">=3.7.0-0"
+  dart: ">=2.18.0 <3.0.0"
+  flutter: ">=3.0.0"
