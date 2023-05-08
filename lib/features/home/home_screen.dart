@@ -11,18 +11,16 @@ import 'package:pitel_ui_kit/routing/app_router.dart';
 import 'package:plugin_pitel/flutter_pitel_voip.dart';
 import 'package:is_lock_screen/is_lock_screen.dart';
 
-final checkIsPushNotif = StateProvider<bool>((ref) => false);
-
-class HomeScreen extends ConsumerStatefulWidget {
+class HomeScreen extends StatefulWidget {
   final PitelCall _pitelCall = PitelClient.getInstance().pitelCall;
 
   HomeScreen({Key? key}) : super(key: key);
 
   @override
-  ConsumerState<HomeScreen> createState() => _MyHomeScreen();
+  State<HomeScreen> createState() => _MyHomeScreen();
 }
 
-class _MyHomeScreen extends ConsumerState<HomeScreen>
+class _MyHomeScreen extends State<HomeScreen>
     with WidgetsBindingObserver
     implements SipPitelHelperListener {
   // late String _dest;
@@ -235,12 +233,13 @@ class _MyHomeScreen extends ConsumerState<HomeScreen>
                   // SIP INFO DATA: input Sip info config data
                   final PackageInfo packageInfo =
                       await PackageInfo.fromPlatform();
+                  final deviceTokenRes = await PushVoipNotif.getDeviceToken();
                   final pnPushParams = PnPushParams(
                     pnProvider: Platform.isAndroid ? 'fcm' : 'apns',
                     pnParam: Platform.isAndroid
                         ? packageInfo.packageName
                         : 'XP2BMU4626.${packageInfo.packageName}.voip',
-                    pnPrid: deviceToken,
+                    pnPrid: deviceTokenRes,
                   );
                   final pitelClient = PitelServiceImpl();
                   pitelClient.setExtensionInfo(sipInfoData, pnPushParams);
