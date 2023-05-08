@@ -235,12 +235,13 @@ class _MyHomeScreen extends ConsumerState<HomeScreen>
                   // SIP INFO DATA: input Sip info config data
                   final PackageInfo packageInfo =
                       await PackageInfo.fromPlatform();
+                  final deviceTokenRes = await PushVoipNotif.getDeviceToken();
                   final pnPushParams = PnPushParams(
                     pnProvider: Platform.isAndroid ? 'fcm' : 'apns',
                     pnParam: Platform.isAndroid
                         ? packageInfo.packageName
                         : 'XP2BMU4626.${packageInfo.packageName}.voip',
-                    pnPrid: deviceToken,
+                    pnPrid: deviceTokenRes,
                   );
                   final pitelClient = PitelServiceImpl();
                   pitelClient.setExtensionInfo(sipInfoData, pnPushParams);
