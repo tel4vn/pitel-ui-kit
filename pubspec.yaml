@@ -41,6 +41,7 @@ dependencies:
   flutter_callkit_incoming: ^1.0.3+3
   flutter_riverpod: ^2.3.4
   is_lock_screen: ^2.0.0
+  wakelock: ^0.6.2
   plugin_pitel:
     git:
       url: https://{{Personal Access Token}}@github.com/tel4vn/flutter-pitel-voip.git

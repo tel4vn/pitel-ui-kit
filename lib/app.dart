@@ -73,9 +73,6 @@ class _MyAppState extends State<MyApp> {
         if (Platform.isAndroid && state == AppState.opened) {
           handleRegister();
         }
-        if (Platform.isAndroid && state == AppState.resumed) {
-          handleRegister();
-        }
         if (Platform.isIOS && state == AppState.resumed) {
           handleRegister();
         }
