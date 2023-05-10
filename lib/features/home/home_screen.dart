@@ -121,7 +121,7 @@ class _MyHomeScreen extends ConsumerState<HomeScreen>
     if (Platform.isAndroid) {
       context.pushNamed(AppRoute.callScreen.name);
     }
-    if (!lockScreen) {
+    if (!lockScreen && Platform.isIOS) {
       context.pushNamed(AppRoute.callScreen.name);
     }
   }
