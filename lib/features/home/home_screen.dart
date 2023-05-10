@@ -112,7 +112,7 @@ class _MyHomeScreen extends State<HomeScreen>
     if (Platform.isAndroid) {
       context.pushNamed(AppRoute.callPage.name);
     }
-    if (!lockScreen) {
+    if (!lockScreen && Platform.isIOS) {
       context.pushNamed(AppRoute.callPage.name);
     }
   }
@@ -238,7 +238,7 @@ class _MyHomeScreen extends State<HomeScreen>
                     pnProvider: Platform.isAndroid ? 'fcm' : 'apns',
                     pnParam: Platform.isAndroid
                         ? packageInfo.packageName
-                        : 'XP2BMU4626.${packageInfo.packageName}.voip',
+                        : '${TeamID}.${packageInfo.packageName}.voip',
                     pnPrid: deviceTokenRes,
                   );
                   final pitelClient = PitelServiceImpl();
