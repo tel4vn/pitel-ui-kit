@@ -11,6 +11,7 @@ import 'package:plugin_pitel/component/pitel_call_state.dart';
 import 'package:plugin_pitel/component/sip_pitel_helper_listener.dart';
 import 'package:plugin_pitel/pitel_sdk/pitel_call.dart';
 import 'package:plugin_pitel/pitel_sdk/pitel_client.dart';
+import 'package:plugin_pitel/services/models/pn_push_params.dart';
 import 'package:plugin_pitel/services/pitel_service.dart';
 import 'package:plugin_pitel/sip/sip_ua.dart';
 import 'package:plugin_pitel/voip_push/push_notif.dart';
@@ -169,6 +170,7 @@ class _MyHomeScreen extends ConsumerState<HomeScreen>
 
   // Register Device token when SIP register success (state REGISTER)
   void _registerDeviceToken() async {
+    final fcmToken = await PushVoipNotif.getFCMToken();
     final response = await pitelClient.registerDeviceToken(
       deviceToken: "${device_token}",
       platform: '${platform}', // android or ios
@@ -176,6 +178,7 @@ class _MyHomeScreen extends ConsumerState<HomeScreen>
       domain: '${Domain}',
       extension: '${UUser}',
       appMode: kReleaseMode ? 'production' : 'dev',
+      fcmToken: fcmToken,
     );
   }
 
@@ -216,10 +219,19 @@ class _MyHomeScreen extends ConsumerState<HomeScreen>
                   ),
                 ))
             : ElevatedButton(
-                onPressed: () {
+                onPressed: () async {
+                  final fcmToken = await PushVoipNotif.getFCMToken();
+                  final pnPushParams = PnPushParams(
+                    pnProvider: Platform.isAndroid ? 'fcm' : 'apns',
+                    pnParam: Platform.isAndroid
+                        ? '${bundleId}' // Example com.company.app
+                        : '${apple_team_id}.${bundleId}.voip', // Example com.company.app
+                    pnPrid: '${deviceToken}',
+                    fcmToken: fcmToken,
+                  );
                   // SIP INFO DATA: input Sip info config data
                   final pitelClient = PitelServiceImpl();
-                  pitelClient.setExtensionInfo(sipInfoData);
+                  pitelClient.setExtensionInfo(sipInfoData, pnPushParams);
                   setState(() {
                     isLogin = true;
                   });

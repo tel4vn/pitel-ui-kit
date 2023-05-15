@@ -8,6 +8,7 @@ import 'package:plugin_pitel/pitel_sdk/pitel_client.dart';
 import 'package:plugin_pitel/services/models/pn_push_params.dart';
 import 'package:plugin_pitel/services/pitel_service.dart';
 import 'package:plugin_pitel/services/sip_info_data.dart';
+import 'package:plugin_pitel/voip_push/push_notif.dart';
 import 'package:plugin_pitel/voip_push/voip_notif.dart';
 
 final sipInfoData = SipInfoData.fromJson({
@@ -53,13 +54,15 @@ class _MyAppState extends State<MyApp> {
     );
   }
   
-  void handleRegister() {
+  void handleRegister() async {
+    final fcmToken = await PushVoipNotif.getFCMToken();
     final pnPushParams = PnPushParams(
       pnProvider: Platform.isAndroid ? 'fcm' : 'apns',
       pnParam: Platform.isAndroid
           ? '${bundleId}'                        // Example com.company.app
           : '${apple_team_id}.${bundleId}.voip', // Example com.company.app
-      pnPrid: '${deviceToken}',
+      pnPrid: '${deviceToken}', 
+      fcmToken: fcmToken,
     );
     pitelService.setExtensionInfo(sipInfoData, pnPushParams);
   }
