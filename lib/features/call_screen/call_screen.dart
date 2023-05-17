@@ -3,7 +3,6 @@ import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_callkit_incoming/flutter_callkit_incoming.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:pitel_ui_kit/common_widgets/action_button.dart';
 import 'package:pitel_ui_kit/routing/app_router.dart';
@@ -15,17 +14,17 @@ import 'package:plugin_pitel/pitel_sdk/pitel_client.dart';
 import 'package:plugin_pitel/sip/sip_ua.dart';
 import 'package:wakelock/wakelock.dart';
 
-class CallScreenWidget extends ConsumerStatefulWidget {
+class CallScreenWidget extends StatefulWidget {
   CallScreenWidget({Key? key, this.receivedBackground = false})
       : super(key: key);
   final PitelCall _pitelCall = PitelClient.getInstance().pitelCall;
   final bool receivedBackground;
 
   @override
-  ConsumerState<CallScreenWidget> createState() => _MyCallScreenWidget();
+  State<CallScreenWidget> createState() => _MyCallScreenWidget();
 }
 
-class _MyCallScreenWidget extends ConsumerState<CallScreenWidget>
+class _MyCallScreenWidget extends State<CallScreenWidget>
     with WidgetsBindingObserver
     implements SipPitelHelperListener {
   PitelCall get pitelCall => widget._pitelCall;
