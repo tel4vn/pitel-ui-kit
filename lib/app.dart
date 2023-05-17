@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:package_info_plus/package_info_plus.dart';
 import 'package:pitel_ui_kit/routing/app_router.dart';
 import 'package:plugin_pitel/flutter_pitel_voip.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 final sipInfoData = SipInfoData.fromJson({
   "authPass": "${Password}",
@@ -43,7 +44,7 @@ class _MyAppState extends State<MyApp> {
       callback: (event) {},
       onCallAccept: () {
         //! Re-register when user accept call
-        handleRegister();
+        handleRegisterCall();
       },
       onCallDecline: () {},
       onCallEnd: () {
@@ -52,19 +53,29 @@ class _MyAppState extends State<MyApp> {
     );
   }
 
-  void handleRegister() async {
+  void handleRegisterCall() async {
     final PackageInfo packageInfo = await PackageInfo.fromPlatform();
     final deviceTokenRes = await PushVoipNotif.getDeviceToken();
+    final fcmToken = await PushVoipNotif.getFCMToken();
 
     final pnPushParams = PnPushParams(
       pnProvider: Platform.isAndroid ? 'fcm' : 'apns',
       pnParam: Platform.isAndroid
           ? '${bundleId}'                         // Example com.company.app
           : '${apple_team_id}.${bundleId}.voip',  // Example com.company.app
-      pnPrid: deviceTokenRes,
+      pnPrid: deviceTokenRes, 
+      fcmToken: fcmToken,
     );
 
     pitelService.setExtensionInfo(sipInfoData, pnPushParams);
+  }
+
+  void handleRegister() async {
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
+    final String? registerState = prefs.getString("REGISTER_STATE");
+
+    if (registerState == "REGISTERED") return;
+    handleRegisterCall();
   }
 
   @override
