@@ -1,10 +1,10 @@
-import 'dart:developer';
 import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:package_info_plus/package_info_plus.dart';
 import 'package:pitel_ui_kit/routing/app_router.dart';
 import 'package:plugin_pitel/flutter_pitel_voip.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 // final sipInfoData = SipInfoData.fromJson({
 //   "authPass": "${Password}",
@@ -47,9 +47,11 @@ class MyApp extends StatefulWidget {
   State<MyApp> createState() => _MyAppState();
 }
 
-class _MyAppState extends State<MyApp> {
+class _MyAppState extends State<MyApp> implements SipPitelHelperListener {
   final pitelService = PitelServiceImpl();
   final PitelCall pitelCall = PitelClient.getInstance().pitelCall;
+
+  String registerStatus = "UNREGISTERED";
 
   @override
   void initState() {
@@ -58,7 +60,7 @@ class _MyAppState extends State<MyApp> {
       callback: (event) {},
       onCallAccept: () {
         //! Re-register when user accept call
-        handleRegister();
+        handleRegisterCall();
       },
       onCallDecline: () {},
       onCallEnd: () {
@@ -67,26 +69,29 @@ class _MyAppState extends State<MyApp> {
     );
   }
 
-  void handleRegister() async {
+  void handleRegisterCall() async {
     final PackageInfo packageInfo = await PackageInfo.fromPlatform();
     final deviceTokenRes = await PushVoipNotif.getDeviceToken();
+    final fcmToken = await PushVoipNotif.getFCMToken();
+
     final pnPushParams = PnPushParams(
       pnProvider: Platform.isAndroid ? 'fcm' : 'apns',
       pnParam: Platform.isAndroid
           ? packageInfo.packageName
           : 'XP2BMU4626.${packageInfo.packageName}.voip',
       pnPrid: deviceTokenRes,
+      fcmToken: fcmToken,
     );
 
-    // final pnPushParams = PnPushParams(
-    //   pnProvider: Platform.isAndroid ? 'fcm' : 'apns',
-    //   pnParam: Platform.isAndroid
-    //       ? '${bundleId}' // Example com.company.app
-    //       : '${apple_team_id}.${bundleId}.voip', // Example com.company.app
-    //   pnPrid: deviceTokenRes,
-    // );
-
     pitelService.setExtensionInfo(sipInfoData, pnPushParams);
+  }
+
+  void handleRegister() async {
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
+    final String? registerState = prefs.getString("REGISTER_STATE");
+
+    if (registerState == "REGISTERED") return;
+    handleRegisterCall();
   }
 
   @override
@@ -113,4 +118,41 @@ class _MyAppState extends State<MyApp> {
       ),
     );
   }
+
+  @override
+  void callStateChanged(String callId, PitelCallState state) {}
+
+  @override
+  void onCallInitiated(String callId) {}
+
+  @override
+  void onCallReceived(String callId) {}
+
+  @override
+  void onNewMessage(PitelSIPMessageRequest msg) {}
+
+  @override
+  void registrationStateChanged(PitelRegistrationState state) {
+    switch (state.state) {
+      case PitelRegistrationStateEnum.REGISTRATION_FAILED:
+        break;
+      case PitelRegistrationStateEnum.NONE:
+        break;
+      case PitelRegistrationStateEnum.UNREGISTERED:
+        // ref.read(registerStateController.notifier).state = 'UNREGISTERED';
+        setState(() {
+          registerStatus = "UNREGISTERED";
+        });
+        break;
+      case PitelRegistrationStateEnum.REGISTERED:
+        setState(() {
+          registerStatus = "REGISTERED";
+        });
+        // ref.read(registerStateController.notifier).state = 'REGISTERED';
+        break;
+    }
+  }
+
+  @override
+  void transportStateChanged(PitelTransportState state) {}
 }

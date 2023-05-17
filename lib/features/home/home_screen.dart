@@ -10,19 +10,20 @@ import 'package:pitel_ui_kit/app.dart';
 import 'package:pitel_ui_kit/routing/app_router.dart';
 import 'package:plugin_pitel/flutter_pitel_voip.dart';
 import 'package:is_lock_screen/is_lock_screen.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 final checkIsPushNotif = StateProvider<bool>((ref) => false);
 
-class HomeScreen extends ConsumerStatefulWidget {
+class HomeScreen extends StatefulWidget {
   final PitelCall _pitelCall = PitelClient.getInstance().pitelCall;
 
   HomeScreen({Key? key}) : super(key: key);
 
   @override
-  ConsumerState<HomeScreen> createState() => _MyHomeScreen();
+  State<HomeScreen> createState() => _MyHomeScreen();
 }
 
-class _MyHomeScreen extends ConsumerState<HomeScreen>
+class _MyHomeScreen extends State<HomeScreen>
     with WidgetsBindingObserver
     implements SipPitelHelperListener {
   // late String _dest;
@@ -174,6 +175,7 @@ class _MyHomeScreen extends ConsumerState<HomeScreen>
   void _registerDeviceToken() async {
     final PackageInfo packageInfo = await PackageInfo.fromPlatform();
     final deviceTokenRes = await PushVoipNotif.getDeviceToken();
+    final fcmToken = await PushVoipNotif.getFCMToken();
 
     final response = await pitelClient.registerDeviceToken(
       deviceToken: deviceTokenRes,
@@ -182,6 +184,7 @@ class _MyHomeScreen extends ConsumerState<HomeScreen>
       domain: sipInfoData.registerServer,
       extension: sipInfoData.userID.toString(),
       appMode: kReleaseMode ? 'production' : 'dev',
+      fcmToken: fcmToken,
     );
   }
 
@@ -236,12 +239,15 @@ class _MyHomeScreen extends ConsumerState<HomeScreen>
                   final PackageInfo packageInfo =
                       await PackageInfo.fromPlatform();
                   final deviceTokenRes = await PushVoipNotif.getDeviceToken();
+                  final fcmToken = await PushVoipNotif.getFCMToken();
+
                   final pnPushParams = PnPushParams(
                     pnProvider: Platform.isAndroid ? 'fcm' : 'apns',
                     pnParam: Platform.isAndroid
                         ? packageInfo.packageName
                         : 'XP2BMU4626.${packageInfo.packageName}.voip',
                     pnPrid: deviceTokenRes,
+                    fcmToken: fcmToken,
                   );
                   final pitelClient = PitelServiceImpl();
                   pitelClient.setExtensionInfo(sipInfoData, pnPushParams);
@@ -280,18 +286,22 @@ class _MyHomeScreen extends ConsumerState<HomeScreen>
 
   // STATUS: check register status
   @override
-  void registrationStateChanged(PitelRegistrationState state) {
+  void registrationStateChanged(PitelRegistrationState state) async {
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
+
     switch (state.state) {
       case PitelRegistrationStateEnum.REGISTRATION_FAILED:
         goBack();
         break;
       case PitelRegistrationStateEnum.NONE:
       case PitelRegistrationStateEnum.UNREGISTERED:
+        prefs.setString("REGISTER_STATE", "UNREGISTERED");
         setState(() {
           receivedMsg = 'UNREGISTERED';
         });
         break;
       case PitelRegistrationStateEnum.REGISTERED:
+        prefs.setString("REGISTER_STATE", "REGISTERED");
         setState(() {
           receivedMsg = 'REGISTERED';
         });
