@@ -2,7 +2,6 @@ import 'dart:io';
 
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_callkit_incoming/flutter_callkit_incoming.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:package_info_plus/package_info_plus.dart';
@@ -10,23 +9,21 @@ import 'package:pitel_ui_kit/app.dart';
 import 'package:pitel_ui_kit/routing/app_router.dart';
 import 'package:plugin_pitel/flutter_pitel_voip.dart';
 import 'package:is_lock_screen/is_lock_screen.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 
-final checkIsPushNotif = StateProvider<bool>((ref) => false);
+final callStateController =
+    StateProvider<PitelCallStateEnum>((ref) => PitelCallStateEnum.NONE);
 
-class HomeScreen extends StatefulWidget {
+class HomeScreen extends ConsumerStatefulWidget {
   final PitelCall _pitelCall = PitelClient.getInstance().pitelCall;
 
   HomeScreen({Key? key}) : super(key: key);
 
   @override
-  State<HomeScreen> createState() => _MyHomeScreen();
+  ConsumerState<HomeScreen> createState() => _MyHomeScreen();
 }
 
-class _MyHomeScreen extends State<HomeScreen>
-    with WidgetsBindingObserver
-    implements SipPitelHelperListener {
-  // late String _dest;
+class _MyHomeScreen extends ConsumerState<HomeScreen>
+    with WidgetsBindingObserver {
   PitelCall get pitelCall => widget._pitelCall;
   final TextEditingController _textController = TextEditingController();
 
@@ -37,13 +34,12 @@ class _MyHomeScreen extends State<HomeScreen>
   String state = '';
   bool isLogin = false;
   bool lockScreen = false;
-  // INIT: Initialize state
+
   @override
   initState() {
     super.initState();
     state = pitelCall.getRegisterState();
     receivedMsg = 'UNREGISTER';
-    _bindEventListeners();
     _getDeviceToken();
 
     WidgetsBinding.instance.addObserver(this);
@@ -73,57 +69,6 @@ class _MyHomeScreen extends State<HomeScreen>
   @override
   void deactivate() {
     super.deactivate();
-    _removeEventListeners();
-  }
-
-  void _bindEventListeners() {
-    pitelCall.addListener(this);
-  }
-
-  void _removeEventListeners() {
-    pitelCall.removeListener(this);
-  }
-
-  // HANDLE: handle message if register status change
-  @override
-  void onNewMessage(PitelSIPMessageRequest msg) {
-    var msgBody = msg.request.body as String;
-    setState(() {
-      receivedMsg = msgBody;
-    });
-  }
-
-  @override
-  void callStateChanged(String callId, PitelCallState state) {
-    if (state.state == PitelCallStateEnum.ENDED) {
-      FlutterCallkitIncoming.endAllCalls();
-    }
-    if (state.state == PitelCallStateEnum.STREAM) {
-      pitelCall.enableSpeakerphone(false);
-    }
-  }
-
-  @override
-  void transportStateChanged(PitelTransportState state) {}
-
-  @override
-  void onCallReceived(String callId) {
-    pitelCall.setCallCurrent(callId);
-    if (Platform.isIOS) {
-      pitelCall.answer();
-    }
-    if (Platform.isAndroid) {
-      context.pushNamed(AppRoute.callPage.name);
-    }
-    if (!lockScreen) {
-      context.pushNamed(AppRoute.callPage.name);
-    }
-  }
-
-  @override
-  void onCallInitiated(String callId) {
-    pitelCall.setCallCurrent(callId);
-    context.pushNamed(AppRoute.callPage.name);
   }
 
   // ACTION: call device if register success
@@ -213,99 +158,89 @@ class _MyHomeScreen extends State<HomeScreen>
         title: const Text("Pitel UI Kit"),
         centerTitle: true,
       ),
-      body: Column(crossAxisAlignment: CrossAxisAlignment.center, children: [
-        Container(
-            padding: const EdgeInsets.all(20),
-            width: 360,
-            child: Text(
-              'STATUS: $receivedMsg',
+      body: PitelVoipCall(
+        lockScreen: lockScreen,
+        goBack: () => context.go('/'),
+        goToCall: () => context.pushNamed(AppRoute.callPage.name),
+        onCallState: (callState) {
+          ref.read(callStateController.notifier).state = callState;
+        },
+        onRegisterState: (String registerState) {
+          setState(() {
+            receivedMsg = registerState;
+          });
+        },
+        child: Column(crossAxisAlignment: CrossAxisAlignment.center, children: [
+          Container(
+              padding: const EdgeInsets.all(20),
+              width: 360,
+              child: Text(
+                'STATUS: $receivedMsg',
+                textAlign: TextAlign.center,
+                style: const TextStyle(
+                    fontSize: 18,
+                    fontWeight: FontWeight.bold,
+                    color: Colors.red),
+              )),
+          isLogin
+              ? TextButton(
+                  onPressed: _logout,
+                  child: const Text(
+                    'Logout',
+                    style: TextStyle(
+                      color: Colors.red,
+                      fontWeight: FontWeight.w600,
+                    ),
+                  ))
+              : ElevatedButton(
+                  onPressed: () async {
+                    // SIP INFO DATA: input Sip info config data
+                    final PackageInfo packageInfo =
+                        await PackageInfo.fromPlatform();
+                    final deviceTokenRes = await PushVoipNotif.getDeviceToken();
+                    final fcmToken = await PushVoipNotif.getFCMToken();
+
+                    final pnPushParams = PnPushParams(
+                      pnProvider: Platform.isAndroid ? 'fcm' : 'apns',
+                      pnParam: Platform.isAndroid
+                          ? packageInfo.packageName
+                          : 'XP2BMU4626.${packageInfo.packageName}.voip',
+                      pnPrid: deviceTokenRes,
+                      fcmToken: fcmToken,
+                    );
+                    final pitelClient = PitelServiceImpl();
+                    pitelClient.setExtensionInfo(sipInfoData, pnPushParams);
+                    setState(() {
+                      isLogin = true;
+                    });
+                    _registerDeviceToken();
+                  },
+                  child: const Text("Register"),
+                ),
+          const SizedBox(height: 20),
+          Container(
+            color: Colors.green,
+            child: TextField(
+              keyboardType: TextInputType.number,
+              style: const TextStyle(fontSize: 20),
               textAlign: TextAlign.center,
-              style: const TextStyle(
-                  fontSize: 18, fontWeight: FontWeight.bold, color: Colors.red),
-            )),
-        isLogin
-            ? TextButton(
-                onPressed: _logout,
-                child: const Text(
-                  'Logout',
-                  style: TextStyle(
-                    color: Colors.red,
-                    fontWeight: FontWeight.w600,
-                  ),
-                ))
-            : ElevatedButton(
-                onPressed: () async {
-                  // SIP INFO DATA: input Sip info config data
-                  final PackageInfo packageInfo =
-                      await PackageInfo.fromPlatform();
-                  final deviceTokenRes = await PushVoipNotif.getDeviceToken();
-                  final fcmToken = await PushVoipNotif.getFCMToken();
-
-                  final pnPushParams = PnPushParams(
-                    pnProvider: Platform.isAndroid ? 'fcm' : 'apns',
-                    pnParam: Platform.isAndroid
-                        ? packageInfo.packageName
-                        : 'XP2BMU4626.${packageInfo.packageName}.voip',
-                    pnPrid: deviceTokenRes,
-                    fcmToken: fcmToken,
-                  );
-                  final pitelClient = PitelServiceImpl();
-                  pitelClient.setExtensionInfo(sipInfoData, pnPushParams);
-                  setState(() {
-                    isLogin = true;
-                  });
-                  _registerDeviceToken();
-                },
-                child: const Text("Register"),
-              ),
-        const SizedBox(height: 20),
-        Container(
-          color: Colors.green,
-          child: TextField(
-            keyboardType: TextInputType.number,
-            style: const TextStyle(fontSize: 20),
-            textAlign: TextAlign.center,
-            decoration: const InputDecoration(
-                border: InputBorder.none,
-                hintText: "Input Phone number",
-                hintStyle: TextStyle(fontSize: 18)),
-            controller: _textController,
-            showCursor: true,
-            autofocus: true,
+              decoration: const InputDecoration(
+                  border: InputBorder.none,
+                  hintText: "Input Phone number",
+                  hintStyle: TextStyle(fontSize: 18)),
+              controller: _textController,
+              showCursor: true,
+              autofocus: true,
+            ),
           ),
-        ),
-        const SizedBox(height: 20),
-        receivedMsg == "REGISTERED"
-            ? ElevatedButton(
-                onPressed: () => _handleCall(context, true),
-                child: const Text("Call"))
-            : const SizedBox.shrink(),
-      ]),
+          const SizedBox(height: 20),
+          receivedMsg == "REGISTERED"
+              ? ElevatedButton(
+                  onPressed: () => _handleCall(context, true),
+                  child: const Text("Call"))
+              : const SizedBox.shrink(),
+        ]),
+      ),
     );
-  }
-
-  // STATUS: check register status
-  @override
-  void registrationStateChanged(PitelRegistrationState state) async {
-    final SharedPreferences prefs = await SharedPreferences.getInstance();
-
-    switch (state.state) {
-      case PitelRegistrationStateEnum.REGISTRATION_FAILED:
-        goBack();
-        break;
-      case PitelRegistrationStateEnum.NONE:
-      case PitelRegistrationStateEnum.UNREGISTERED:
-        prefs.setString("REGISTER_STATE", "UNREGISTERED");
-        setState(() {
-          receivedMsg = 'UNREGISTERED';
-        });
-        break;
-      case PitelRegistrationStateEnum.REGISTERED:
-        prefs.setString("REGISTER_STATE", "REGISTERED");
-        setState(() {
-          receivedMsg = 'REGISTERED';
-        });
-        break;
-    }
   }
 }

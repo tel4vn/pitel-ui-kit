@@ -47,11 +47,9 @@ class MyApp extends StatefulWidget {
   State<MyApp> createState() => _MyAppState();
 }
 
-class _MyAppState extends State<MyApp> implements SipPitelHelperListener {
+class _MyAppState extends State<MyApp> {
   final pitelService = PitelServiceImpl();
   final PitelCall pitelCall = PitelClient.getInstance().pitelCall;
-
-  String registerStatus = "UNREGISTERED";
 
   @override
   void initState() {
@@ -97,16 +95,8 @@ class _MyAppState extends State<MyApp> implements SipPitelHelperListener {
   @override
   Widget build(BuildContext context) {
     final goRouter = router;
-    return AppLifecycleTracker(
-      //! Re-Register when resumed/open app in Android
-      didChangeAppState: (state) {
-        if (Platform.isAndroid && state == AppState.opened) {
-          handleRegister();
-        }
-        if (Platform.isIOS && state == AppState.resumed) {
-          handleRegister();
-        }
-      },
+    return PitelVoip(
+      handleRegister: handleRegister,
       child: MaterialApp.router(
         routerDelegate: goRouter.routerDelegate,
         routeInformationParser: goRouter.routeInformationParser,
@@ -118,41 +108,4 @@ class _MyAppState extends State<MyApp> implements SipPitelHelperListener {
       ),
     );
   }
-
-  @override
-  void callStateChanged(String callId, PitelCallState state) {}
-
-  @override
-  void onCallInitiated(String callId) {}
-
-  @override
-  void onCallReceived(String callId) {}
-
-  @override
-  void onNewMessage(PitelSIPMessageRequest msg) {}
-
-  @override
-  void registrationStateChanged(PitelRegistrationState state) {
-    switch (state.state) {
-      case PitelRegistrationStateEnum.REGISTRATION_FAILED:
-        break;
-      case PitelRegistrationStateEnum.NONE:
-        break;
-      case PitelRegistrationStateEnum.UNREGISTERED:
-        // ref.read(registerStateController.notifier).state = 'UNREGISTERED';
-        setState(() {
-          registerStatus = "UNREGISTERED";
-        });
-        break;
-      case PitelRegistrationStateEnum.REGISTERED:
-        setState(() {
-          registerStatus = "REGISTERED";
-        });
-        // ref.read(registerStateController.notifier).state = 'REGISTERED';
-        break;
-    }
-  }
-
-  @override
-  void transportStateChanged(PitelTransportState state) {}
 }
