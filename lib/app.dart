@@ -1,4 +1,3 @@
-import 'dart:developer';
 import 'dart:io';
 
 import 'package:flutter/material.dart';
@@ -22,7 +21,6 @@ final sipInfoData = SipInfoData.fromJson({
   "userName": "${username}@${Domain}",
   "apiDomain": "${URL API}"
 });
-
 
 const String deviceToken = '';
 
@@ -63,7 +61,7 @@ class _MyAppState extends State<MyApp> {
       pnParam: Platform.isAndroid
           ? '${bundleId}'                         // Example com.company.app
           : '${apple_team_id}.${bundleId}.voip',  // Example com.company.app
-      pnPrid: deviceTokenRes, 
+      pnPrid: deviceTokenRes,
       fcmToken: fcmToken,
     );
 
@@ -81,19 +79,8 @@ class _MyAppState extends State<MyApp> {
   @override
   Widget build(BuildContext context) {
     final goRouter = router;
-    return AppLifecycleTracker(
-      //! Re-Register when resumed/open app in Android
-      didChangeAppState: (state) {
-        if (Platform.isAndroid && state == AppState.opened) {
-          handleRegister();
-        }
-        if (Platform.isAndroid && state == AppState.resumed) {
-          handleRegister();
-        }
-        if (Platform.isIOS && state == AppState.resumed) {
-          handleRegister();
-        }
-      },
+    return PitelVoip(
+      handleRegister: handleRegister,
       child: MaterialApp.router(
         routerDelegate: goRouter.routerDelegate,
         routeInformationParser: goRouter.routeInformationParser,
