@@ -38,8 +38,6 @@ final sipInfoData = SipInfoData.fromJson({
   "apiDomain": "https://api-mobile.tel4vn.com"
 });
 
-const String deviceToken = '';
-
 class MyApp extends StatefulWidget {
   const MyApp({Key? key}) : super(key: key);
 
@@ -50,22 +48,7 @@ class MyApp extends StatefulWidget {
 class _MyAppState extends State<MyApp> {
   final pitelService = PitelServiceImpl();
   final PitelCall pitelCall = PitelClient.getInstance().pitelCall;
-
-  @override
-  void initState() {
-    super.initState();
-    VoipNotifService.listenerEvent(
-      callback: (event) {},
-      onCallAccept: () {
-        //! Re-register when user accept call
-        handleRegisterCall();
-      },
-      onCallDecline: () {},
-      onCallEnd: () {
-        pitelCall.hangup();
-      },
-    );
-  }
+  bool haveCall = false;
 
   void handleRegisterCall() async {
     final PackageInfo packageInfo = await PackageInfo.fromPlatform();
@@ -97,6 +80,7 @@ class _MyAppState extends State<MyApp> {
     final goRouter = router;
     return PitelVoip(
       handleRegister: handleRegister,
+      handleRegisterCall: handleRegisterCall,
       child: MaterialApp.router(
         routerDelegate: goRouter.routerDelegate,
         routeInformationParser: goRouter.routeInformationParser,
