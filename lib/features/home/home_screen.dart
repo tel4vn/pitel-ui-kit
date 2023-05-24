@@ -22,8 +22,7 @@ class HomeScreen extends ConsumerStatefulWidget {
   ConsumerState<HomeScreen> createState() => _MyHomeScreen();
 }
 
-class _MyHomeScreen extends ConsumerState<HomeScreen>
-    with WidgetsBindingObserver {
+class _MyHomeScreen extends ConsumerState<HomeScreen> {
   PitelCall get pitelCall => widget._pitelCall;
   final TextEditingController _textController = TextEditingController();
 
@@ -33,7 +32,6 @@ class _MyHomeScreen extends ConsumerState<HomeScreen>
 
   String state = '';
   bool isLogin = false;
-  bool lockScreen = false;
 
   @override
   initState() {
@@ -41,25 +39,6 @@ class _MyHomeScreen extends ConsumerState<HomeScreen>
     state = pitelCall.getRegisterState();
     receivedMsg = 'UNREGISTER';
     _getDeviceToken();
-
-    WidgetsBinding.instance.addObserver(this);
-  }
-
-  @override
-  void dispose() {
-    WidgetsBinding.instance.removeObserver(this);
-    super.dispose();
-  }
-
-  @override
-  void didChangeAppLifecycleState(AppLifecycleState state) async {
-    super.didChangeAppLifecycleState(state);
-    if (state == AppLifecycleState.inactive) {
-      final isLock = await isLockScreen();
-      setState(() {
-        lockScreen = isLock ?? false;
-      });
-    }
   }
 
   void _getDeviceToken() async {
@@ -142,7 +121,6 @@ class _MyHomeScreen extends ConsumerState<HomeScreen>
         centerTitle: true,
       ),
       body: PitelVoipCall(
-        lockScreen: lockScreen,
         goBack: () => context.go('/'),
         goToCall: () => context.pushNamed(AppRoute.callPage.name),
         onCallState: (callState) {
