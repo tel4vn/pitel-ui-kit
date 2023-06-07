@@ -12,6 +12,7 @@ import 'package:is_lock_screen/is_lock_screen.dart';
 
 final callStateController =
     StateProvider<PitelCallStateEnum>((ref) => PitelCallStateEnum.NONE);
+final pitelSettingProvider = StateProvider<PitelSettings?>((ref) => null);
 
 class HomeScreen extends ConsumerStatefulWidget {
   final PitelCall _pitelCall = PitelClient.getInstance().pitelCall;
@@ -187,7 +188,11 @@ class _MyHomeScreen extends ConsumerState<HomeScreen> {
                       fcmToken: fcmToken,
                     );
                     final pitelClient = PitelServiceImpl();
-                    pitelClient.setExtensionInfo(sipInfoData, pnPushParams);
+                    final pitelSettingRes = await pitelClient.setExtensionInfo(
+                        sipInfoData, pnPushParams);
+                    ref.read(pitelSettingProvider.notifier).state =
+                        pitelSettingRes;
+
                     setState(() {
                       isLogin = true;
                     });

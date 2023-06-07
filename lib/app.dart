@@ -1,10 +1,13 @@
 import 'dart:io';
 
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:package_info_plus/package_info_plus.dart';
 import 'package:pitel_ui_kit/routing/app_router.dart';
 import 'package:plugin_pitel/flutter_pitel_voip.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+
+import 'features/home/home_screen.dart';
 
 // final sipInfoData = SipInfoData.fromJson({
 //   "authPass": "${Password}",
@@ -26,6 +29,7 @@ final sipInfoData = SipInfoData.fromJson({
   "authPass": "Tel4vn.com123@",
   "registerServer": "mobile.tel4vn.com",
   "outboundServer": "pbx-mobile.tel4vn.com:50061",
+  'port': 50061,
   "userID": 103,
   "authID": 103,
   "accountName": "103",
@@ -38,19 +42,19 @@ final sipInfoData = SipInfoData.fromJson({
   "apiDomain": "https://api-mobile.tel4vn.com"
 });
 
-class MyApp extends StatefulWidget {
+class MyApp extends ConsumerStatefulWidget {
   const MyApp({Key? key}) : super(key: key);
 
   @override
-  State<MyApp> createState() => _MyAppState();
+  ConsumerState<MyApp> createState() => _MyAppState();
 }
 
-class _MyAppState extends State<MyApp> {
+class _MyAppState extends ConsumerState<MyApp> {
   final pitelService = PitelServiceImpl();
   final PitelCall pitelCall = PitelClient.getInstance().pitelCall;
   bool haveCall = false;
 
-  void handleRegisterCall() async {
+  void registerFunc() async {
     final PackageInfo packageInfo = await PackageInfo.fromPlatform();
     final deviceTokenRes = await PushVoipNotif.getDeviceToken();
     final fcmToken = await PushVoipNotif.getFCMToken();
@@ -72,7 +76,16 @@ class _MyAppState extends State<MyApp> {
     final String? registerState = prefs.getString("REGISTER_STATE");
 
     if (registerState == "REGISTERED") return;
-    handleRegisterCall();
+    registerFunc();
+  }
+
+  void handleRegisterCall() async {
+    final PitelSettings? pitelSetting = ref.watch(pitelSettingProvider);
+    if (pitelSetting != null) {
+      pitelCall.register(pitelSetting);
+    } else {
+      registerFunc();
+    }
   }
 
   @override
