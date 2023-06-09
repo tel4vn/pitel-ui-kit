@@ -50,7 +50,9 @@ class _MyAppState extends ConsumerState<MyApp> {
       fcmToken: fcmToken,
     );
 
-    pitelService.setExtensionInfo(sipInfoData, pnPushParams);
+    final pitelSetting = await pitelService.setExtensionInfo(sipInfoData, pnPushParams);
+    ref.read(pitelSettingProvider.notifier).state = pitelSetting;
+
   }
 
   void handleRegister() async {

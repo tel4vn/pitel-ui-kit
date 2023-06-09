@@ -8,7 +8,6 @@ import 'package:package_info_plus/package_info_plus.dart';
 import 'package:pitel_ui_kit/app.dart';
 import 'package:pitel_ui_kit/routing/app_router.dart';
 import 'package:plugin_pitel/flutter_pitel_voip.dart';
-import 'package:is_lock_screen/is_lock_screen.dart';
 
 final callStateController =
     StateProvider<PitelCallStateEnum>((ref) => PitelCallStateEnum.NONE);
