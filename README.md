@@ -55,6 +55,7 @@ final sipInfoData = SipInfoData.fromJson({
     "authPass": "${Password}",
     "registerServer": "${Domain}",
     "outboundServer": "${Outbound Proxy}",
+    'port': PORT,                   // Port of outboundServer
     "userID": UUser,                // Example 101
     "authID": UUser,                // Example 101
     "accountName": "${UUser}",      // Example 101
