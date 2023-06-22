@@ -26,20 +26,20 @@ import 'features/home/home_screen.dart';
 // });
 
 final sipInfoData = SipInfoData.fromJson({
-  "authPass": "Tel4vn.com123@",
-  "registerServer": "mobile.tel4vn.com",
-  "outboundServer": "pbx-mobile.tel4vn.com:50061",
+  "authPass": "Agent20@@2023",
+  "registerServer": "ccp-demo.tel4vn.com",
+  "outboundServer": "pbx-danhkhoi.tel4vn.com:50061",
   'port': 50061,
-  "userID": 103,
-  "authID": 103,
-  "accountName": "103",
-  "displayName": "103@mobile.tel4vn.com",
+  "userID": 120,
+  "authID": 120,
+  "accountName": "120",
+  "displayName": "120@ccp-demo.tel4vn.com",
   "dialPlan": null,
   "randomPort": null,
   "voicemail": null,
-  "wssUrl": "wss://wss-mobile.tel4vn.com:7444",
-  "userName": "user3@mobile.tel4vn.com",
-  "apiDomain": "https://api-mobile.tel4vn.com"
+  "wssUrl": "wss://psbc01.tel4vn.com:7444",
+  "userName": "Agent20@mobile.tel4vn.com",
+  "apiDomain": "https://api-danhkhoi.tel4vn.com"
 });
 
 class MyApp extends ConsumerStatefulWidget {
@@ -68,7 +68,9 @@ class _MyAppState extends ConsumerState<MyApp> {
       fcmToken: fcmToken,
     );
 
-    pitelService.setExtensionInfo(sipInfoData, pnPushParams);
+    final pitelSetting =
+        await pitelService.setExtensionInfo(sipInfoData, pnPushParams);
+    ref.read(pitelSettingProvider.notifier).state = pitelSetting;
   }
 
   void handleRegister() async {
