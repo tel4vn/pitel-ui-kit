@@ -50,16 +50,13 @@ class _MyAppState extends ConsumerState<MyApp> {
       fcmToken: fcmToken,
     );
 
-    final pitelSetting = await pitelService.setExtensionInfo(sipInfoData, pnPushParams);
+    final pitelClient = PitelServiceImpl();
+    final pitelSetting = await pitelClient.setExtensionInfo(sipInfoData, pnPushParams);
     ref.read(pitelSettingProvider.notifier).state = pitelSetting;
 
   }
 
-  void handleRegister() async {
-    final SharedPreferences prefs = await SharedPreferences.getInstance();
-    final String? registerState = prefs.getString("REGISTER_STATE");
-
-    if (registerState == "REGISTERED") return;
+  void handleRegister()  {
     registerFunc();
   }
   

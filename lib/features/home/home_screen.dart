@@ -129,6 +129,9 @@ class _MyHomeScreen extends ConsumerState<HomeScreen> {
         onRegisterState: (String registerState) {
           setState(() {
             receivedMsg = registerState;
+            if (registerState == 'REGISTERED') {
+              isLogin = true;
+            }
           });
         },
         child: Column(crossAxisAlignment: CrossAxisAlignment.center, children: [

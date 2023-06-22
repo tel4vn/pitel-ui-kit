@@ -14,6 +14,14 @@ pitel_ui_kit is demo project.
 - **Setup to wake up app**: please follow guide in [here](https://github.com/tel4vn/flutter-pitel-voip/blob/main/PUSH_NOTIF.md) to setting push notification (FCM for android), Pushkit (for IOS).
 - In file `firebase_options.dart`, fill information from your google_service.json
 
+## Troubleshooting
+
+[Android only]: If you give a error flutter_webrtc when run app in android. Please update code in file
+
+```
+$HOME/.pub-cache/hosted/pub.dartlang.org/flutter_webrtc-{version}/android/build.gradle
+```
+
 ```dart
   // Replace information from your google_service.json
   static const FirebaseOptions android = FirebaseOptions(
