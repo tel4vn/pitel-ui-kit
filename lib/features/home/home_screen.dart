@@ -1,6 +1,6 @@
+import 'dart:developer';
 import 'dart:io';
 
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
@@ -8,7 +8,6 @@ import 'package:package_info_plus/package_info_plus.dart';
 import 'package:pitel_ui_kit/app.dart';
 import 'package:pitel_ui_kit/routing/app_router.dart';
 import 'package:plugin_pitel/flutter_pitel_voip.dart';
-import 'package:is_lock_screen/is_lock_screen.dart';
 
 final callStateController =
     StateProvider<PitelCallStateEnum>((ref) => PitelCallStateEnum.NONE);
@@ -130,6 +129,7 @@ class _MyHomeScreen extends ConsumerState<HomeScreen> {
       domain: sipInfoData.registerServer,
       extension: sipInfoData.userID.toString(),
     );
+    inspect(response);
   }
 
   @override
@@ -148,6 +148,9 @@ class _MyHomeScreen extends ConsumerState<HomeScreen> {
         onRegisterState: (String registerState) {
           setState(() {
             receivedMsg = registerState;
+            if (registerState == 'REGISTERED') {
+              isLogin = true;
+            }
           });
         },
         child: Column(crossAxisAlignment: CrossAxisAlignment.center, children: [
@@ -214,7 +217,6 @@ class _MyHomeScreen extends ConsumerState<HomeScreen> {
                   hintStyle: TextStyle(fontSize: 18)),
               controller: _textController,
               showCursor: true,
-              autofocus: true,
             ),
           ),
           const SizedBox(height: 20),

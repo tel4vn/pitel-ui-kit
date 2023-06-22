@@ -25,6 +25,7 @@ import 'features/home/home_screen.dart';
 //   "apiDomain": "${URL API}"
 // });
 
+// 120
 final sipInfoData = SipInfoData.fromJson({
   "authPass": "Agent20@@2023",
   "registerServer": "ccp-demo.tel4vn.com",
@@ -41,6 +42,24 @@ final sipInfoData = SipInfoData.fromJson({
   "userName": "Agent20@mobile.tel4vn.com",
   "apiDomain": "https://api-danhkhoi.tel4vn.com"
 });
+
+// 121
+// final sipInfoData = SipInfoData.fromJson({
+//   "authPass": "Agent21@@2023",
+//   "registerServer": "ccp-demo.tel4vn.com",
+//   "outboundServer": "pbx-danhkhoi.tel4vn.com:50061",
+//   'port': 50061,
+//   "userID": 121,
+//   "authID": 121,
+//   "accountName": "121",
+//   "displayName": "121@ccp-demo.tel4vn.com",
+//   "dialPlan": null,
+//   "randomPort": null,
+//   "voicemail": null,
+//   "wssUrl": "wss://psbc01.tel4vn.com:7444",
+//   "userName": "Agent21@mobile.tel4vn.com",
+//   "apiDomain": "https://api-danhkhoi.tel4vn.com"
+// });
 
 class MyApp extends ConsumerStatefulWidget {
   const MyApp({Key? key}) : super(key: key);
@@ -67,9 +86,9 @@ class _MyAppState extends ConsumerState<MyApp> {
       pnPrid: deviceTokenRes,
       fcmToken: fcmToken,
     );
-
+    final pitelClient = PitelServiceImpl();
     final pitelSetting =
-        await pitelService.setExtensionInfo(sipInfoData, pnPushParams);
+        await pitelClient.setExtensionInfo(sipInfoData, pnPushParams);
     ref.read(pitelSettingProvider.notifier).state = pitelSetting;
   }
 
@@ -77,7 +96,7 @@ class _MyAppState extends ConsumerState<MyApp> {
     final SharedPreferences prefs = await SharedPreferences.getInstance();
     final String? registerState = prefs.getString("REGISTER_STATE");
 
-    if (registerState == "REGISTERED") return;
+    // if (registerState == "REGISTERED") return;
     registerFunc();
   }
 
