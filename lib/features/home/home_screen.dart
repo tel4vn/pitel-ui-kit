@@ -108,7 +108,8 @@ class _MyHomeScreen extends ConsumerState<HomeScreen> {
       bundleId: packageInfo.packageName,
       domain: sipInfoData.registerServer,
       extension: sipInfoData.userID.toString(),
-      appMode: kReleaseMode ? 'production' : 'dev',
+      // appMode: kReleaseMode ? 'production' : 'dev',
+      appMode: 'dev',
       fcmToken: fcmToken,
     );
   }
