@@ -12,6 +12,7 @@ import 'package:plugin_pitel/flutter_pitel_voip.dart';
 final callStateController =
     StateProvider<PitelCallStateEnum>((ref) => PitelCallStateEnum.NONE);
 final pitelSettingProvider = StateProvider<PitelSettings?>((ref) => null);
+final acceptCallProvider = StateProvider<bool>((ref) => false);
 
 class HomeScreen extends ConsumerStatefulWidget {
   final PitelCall _pitelCall = PitelClient.getInstance().pitelCall;
@@ -152,6 +153,10 @@ class _MyHomeScreen extends ConsumerState<HomeScreen> {
               isLogin = true;
             }
           });
+        },
+        acceptCall: ref.watch(acceptCallProvider),
+        setAcceptCall: () {
+          ref.read(acceptCallProvider.notifier).state = false;
         },
         child: Column(crossAxisAlignment: CrossAxisAlignment.center, children: [
           Container(

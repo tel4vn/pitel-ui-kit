@@ -107,6 +107,7 @@ class _MyAppState extends ConsumerState<MyApp> {
     } else {
       registerFunc();
     }
+    ref.read(acceptCallProvider.notifier).state = true;
   }
 
   @override
