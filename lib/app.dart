@@ -94,10 +94,11 @@ class _MyAppState extends ConsumerState<MyApp> {
 
   void handleRegister() async {
     final SharedPreferences prefs = await SharedPreferences.getInstance();
-    final String? registerState = prefs.getString("REGISTER_STATE");
+    final bool? isLoggedIn = prefs.getBool("IS_LOGGED_IN");
 
-    // if (registerState == "REGISTERED") return;
-    registerFunc();
+    if (isLoggedIn != null && isLoggedIn) {
+      registerFunc();
+    }
   }
 
   void handleRegisterCall() async {

@@ -8,6 +8,7 @@ import 'package:package_info_plus/package_info_plus.dart';
 import 'package:pitel_ui_kit/app.dart';
 import 'package:pitel_ui_kit/routing/app_router.dart';
 import 'package:plugin_pitel/flutter_pitel_voip.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 final callStateController =
     StateProvider<PitelCallStateEnum>((ref) => PitelCallStateEnum.NONE);
@@ -77,13 +78,16 @@ class _MyHomeScreen extends ConsumerState<HomeScreen> {
     context.go('/');
   }
 
-  void _logout() {
+  void _logout() async {
     setState(() {
       isLogin = false;
       receivedMsg = 'UNREGISTER';
     });
     _removeDeviceToken();
     pitelCall.unregister();
+    // Set isLoggedIn = false when user logout
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
+    prefs.setBool("IS_LOGGED_IN", false);
   }
 
   // Register Device token when SIP register success (state REGISTER)
@@ -146,13 +150,17 @@ class _MyHomeScreen extends ConsumerState<HomeScreen> {
         onCallState: (callState) {
           ref.read(callStateController.notifier).state = callState;
         },
-        onRegisterState: (String registerState) {
-          setState(() {
-            receivedMsg = registerState;
-            if (registerState == 'REGISTERED') {
+        onRegisterState: (String registerState) async {
+          final SharedPreferences prefs = await SharedPreferences.getInstance();
+          if (registerState == 'REGISTERED') {
+            //  Set isLoggedIn = true when user logout
+            prefs.setBool("IS_LOGGED_IN", true);
+
+            setState(() {
+              receivedMsg = registerState;
               isLogin = true;
-            }
-          });
+            });
+          }
         },
         acceptCall: ref.watch(acceptCallProvider),
         setAcceptCall: () {
