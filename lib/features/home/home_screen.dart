@@ -117,6 +117,39 @@ class _MyHomeScreen extends ConsumerState<HomeScreen> {
     );
   }
 
+  void _onRegisterState(String registerState) async {
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
+    if (registerState == 'REGISTERED') {
+      //  Set isLoggedIn = true when user logout
+      prefs.setBool("IS_LOGGED_IN", true);
+      _registerDeviceToken();
+      setState(() {
+        receivedMsg = registerState;
+        isLogin = true;
+      });
+    }
+  }
+
+  void _handleRegister() async {
+    // SIP INFO DATA: input Sip info config data
+    final PackageInfo packageInfo = await PackageInfo.fromPlatform();
+    final deviceTokenRes = await PushVoipNotif.getDeviceToken();
+    final fcmToken = await PushVoipNotif.getFCMToken();
+
+    final pnPushParams = PnPushParams(
+      pnProvider: Platform.isAndroid ? 'fcm' : 'apns',
+      pnParam: Platform.isAndroid
+          ? packageInfo.packageName
+          : '${TEAM_ID}.${packageInfo.packageName}.voip',
+      pnPrid: deviceTokenRes,
+      fcmToken: fcmToken,
+    );
+    final pitelClient = PitelServiceImpl();
+    final pitelSettingRes =
+        await pitelClient.setExtensionInfo(sipInfoData, pnPushParams);
+    ref.read(pitelSettingProvider.notifier).state = pitelSettingRes;
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -130,18 +163,7 @@ class _MyHomeScreen extends ConsumerState<HomeScreen> {
         onCallState: (callState) {
           ref.read(callStateController.notifier).state = callState;
         },
-        onRegisterState: (String registerState) async {
-          final SharedPreferences prefs = await SharedPreferences.getInstance();
-          if (registerState == 'REGISTERED') {
-            //  Set isLoggedIn = true when user logout
-            prefs.setBool("IS_LOGGED_IN", true);
-            _registerDeviceToken();
-            setState(() {
-              receivedMsg = registerState;
-              isLogin = true;
-            });
-          }
-        },
+        onRegisterState: _onRegisterState,
         child: Column(crossAxisAlignment: CrossAxisAlignment.center, children: [
           Container(
               padding: const EdgeInsets.all(20),
@@ -165,27 +187,7 @@ class _MyHomeScreen extends ConsumerState<HomeScreen> {
                     ),
                   ))
               : ElevatedButton(
-                  onPressed: () async {
-                    // SIP INFO DATA: input Sip info config data
-                    final PackageInfo packageInfo =
-                        await PackageInfo.fromPlatform();
-                    final deviceTokenRes = await PushVoipNotif.getDeviceToken();
-                    final fcmToken = await PushVoipNotif.getFCMToken();
-
-                    final pnPushParams = PnPushParams(
-                      pnProvider: Platform.isAndroid ? 'fcm' : 'apns',
-                      pnParam: Platform.isAndroid
-                          ? packageInfo.packageName
-                          : '${TEAM_ID}.${packageInfo.packageName}.voip',
-                      pnPrid: deviceTokenRes,
-                      fcmToken: fcmToken,
-                    );
-                    final pitelClient = PitelServiceImpl();
-                    final pitelSettingRes = await pitelClient.setExtensionInfo(
-                        sipInfoData, pnPushParams);
-                    ref.read(pitelSettingProvider.notifier).state =
-                        pitelSettingRes;
-                  },
+                  onPressed: _handleRegister,
                   child: const Text("Register"),
                 ),
           const SizedBox(height: 20),
