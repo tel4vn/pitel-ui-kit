@@ -108,7 +108,9 @@ class _MyAppState extends ConsumerState<MyApp> {
     } else {
       registerFunc();
     }
-    ref.read(acceptCallProvider.notifier).state = true;
+    // ref.read(acceptCallProvider.notifier).state = true;
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
+    prefs.setBool("ACCEPT_CALL", true);
   }
 
   @override

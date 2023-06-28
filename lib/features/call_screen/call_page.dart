@@ -11,6 +11,9 @@ class CallPage extends ConsumerWidget {
     final callState = ref.watch(callStateController);
     return CallScreen(
       callState: callState,
+      onCallState: (PitelCallStateEnum res) {
+        ref.read(callStateController.notifier).state = res;
+      },
       bgColor: Colors.cyan,
     );
   }
