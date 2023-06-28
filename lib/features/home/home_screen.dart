@@ -13,7 +13,6 @@ import 'package:shared_preferences/shared_preferences.dart';
 final callStateController =
     StateProvider<PitelCallStateEnum>((ref) => PitelCallStateEnum.NONE);
 final pitelSettingProvider = StateProvider<PitelSettings?>((ref) => null);
-final acceptCallProvider = StateProvider<bool>((ref) => false);
 
 class HomeScreen extends ConsumerStatefulWidget {
   final PitelCall _pitelCall = PitelClient.getInstance().pitelCall;
@@ -186,10 +185,6 @@ class _MyHomeScreen extends ConsumerState<HomeScreen> {
         },
         onRegisterState: (String registerState) {
           onRegisterState(registerState);
-        },
-        acceptCall: ref.watch(acceptCallProvider),
-        setAcceptCall: () {
-          ref.read(acceptCallProvider.notifier).state = false;
         },
         child: Column(crossAxisAlignment: CrossAxisAlignment.center, children: [
           Container(
