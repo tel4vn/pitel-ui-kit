@@ -168,7 +168,7 @@ class _MyHomeScreen extends ConsumerState<HomeScreen> {
                       pnProvider: Platform.isAndroid ? 'fcm' : 'apns',
                       pnParam: Platform.isAndroid
                           ? packageInfo.packageName
-                          : '${TEAM_ID}.${packageInfo.packageName}.voip',
+                          : '${apple_team_id}.${packageInfo.packageName}.voip',
                       pnPrid: deviceTokenRes,
                       fcmToken: fcmToken,
                     );
