@@ -10,7 +10,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'features/home/home_screen.dart';
 
 // Extension 1
-final sipInfoDataIOS = SipInfoData.fromJson({
+final sipInfoDataExt1 = SipInfoData.fromJson({
   "authPass": "${Password}",
   "registerServer": "${Domain}",
   "outboundServer": "${Outbound Proxy}",
@@ -22,7 +22,7 @@ final sipInfoDataIOS = SipInfoData.fromJson({
 });
 
 // Extension 2
-final sipInfoDataAndroid = SipInfoData.fromJson({
+final sipInfoDataEx2 = SipInfoData.fromJson({
   "authPass": "${Password}",
   "registerServer": "${Domain}",
   "outboundServer": "${Outbound Proxy}",
@@ -33,7 +33,10 @@ final sipInfoDataAndroid = SipInfoData.fromJson({
   "apiDomain": "${URL API}"
 });
 
-final sipInfoData = Platform.isIOS ? sipInfoDataIOS : sipInfoDataAndroid;
+/// Note: sipInfoDataExt1 is data for Extension 1, sipInfoDataEx2 is data for Extension 2.
+/// Condition in the example just for developer support test.
+/// Replace your condition logic in here.
+final sipInfoData = Platform.isIOS ? sipInfoDataExt1 : sipInfoDataEx2;
 
 class MyApp extends ConsumerStatefulWidget {
   const MyApp({Key? key}) : super(key: key);
