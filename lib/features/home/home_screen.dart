@@ -54,7 +54,7 @@ class _MyHomeScreen extends ConsumerState<HomeScreen> {
       isLogin = false;
       receivedMsg = 'UNREGISTER';
     });
-    pitelCall.unregister();
+    pitelClient.logoutExtension(sipInfoData);
     // Set isLoggedIn = false when user logout
     final SharedPreferences prefs = await SharedPreferences.getInstance();
     prefs.setBool("IS_LOGGED_IN", false);
