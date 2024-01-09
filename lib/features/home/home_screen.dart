@@ -88,6 +88,31 @@ class _MyHomeScreen extends ConsumerState<HomeScreen> {
     }
   }
 
+  void registerFunc() async {
+    final PackageInfo packageInfo = await PackageInfo.fromPlatform();
+
+    final PushNotifParams pushNotifParams = PushNotifParams(
+      teamId: '${apple_team_id}',
+      bundleId: packageInfo.packageName,
+    );
+
+    final pitelClient = PitelServiceImpl();
+    final pitelSetting =
+        await pitelClient.setExtensionInfo(sipInfoData, pushNotifParams);
+    ref.read(pitelSettingProvider.notifier).state = pitelSetting;
+  }
+
+  void _handleRegisterCall() async {
+    final PitelSettings? pitelSetting = ref.watch(pitelSettingProvider);
+    if (pitelSetting != null) {
+      pitelCall.register(pitelSetting);
+    } else {
+      registerFunc();
+    }
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
+    prefs.setBool("ACCEPT_CALL", true);
+  }
+
   // ACTION: call device if register success
   // Flow: Register (with sipInfoData) -> Register success REGISTERED -> Start Call
   void _handleCall(BuildContext context, [bool voiceonly = false]) {
@@ -105,8 +130,7 @@ class _MyHomeScreen extends ConsumerState<HomeScreen> {
       );
     } else {
       // Make call outgoing
-      pitelClient.call(dest, voiceonly).then((value) =>
-          value.fold((succ) => {}, (err) => {receivedMsg = err.toString()}));
+      pitelCall.outgoingCall(dest, _handleRegisterCall);
     }
   }
 
