@@ -130,7 +130,10 @@ class _MyHomeScreen extends ConsumerState<HomeScreen> {
       );
     } else {
       // Make call outgoing
-      pitelCall.outgoingCall(dest, _handleRegisterCall);
+      pitelCall.outGoingCall(
+        phoneNumber: dest,
+        handleRegisterCall: _handleRegisterCall,
+      );
     }
   }
 
