@@ -81,8 +81,6 @@ class _MyAppState extends ConsumerState<MyApp> {
     } else {
       registerFunc();
     }
-    final SharedPreferences prefs = await SharedPreferences.getInstance();
-    prefs.setBool("ACCEPT_CALL", true);
   }
 
   @override

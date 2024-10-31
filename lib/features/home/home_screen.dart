@@ -109,8 +109,6 @@ class _MyHomeScreen extends ConsumerState<HomeScreen> {
     } else {
       registerFunc();
     }
-    final SharedPreferences prefs = await SharedPreferences.getInstance();
-    prefs.setBool("ACCEPT_CALL", true);
   }
 
   // ACTION: call device if register success
