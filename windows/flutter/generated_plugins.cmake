@@ -3,7 +3,9 @@
 #
 
 list(APPEND FLUTTER_PLUGIN_LIST
+  connectivity_plus
   flutter_webrtc
+  network_info_plus
 )
 
 list(APPEND FLUTTER_FFI_PLUGIN_LIST
