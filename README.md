@@ -34,6 +34,20 @@ pitel_ui_kit is demo project.
   );
 ```
 
+- Replace com.pitel.uikit.demo with your bundleId/ packageId in
+  - IOS: Open Xcode -> Signing & Capabilities -> Select Team & Replace your bundleId in field Bundle Identifier
+  - Android: In file `android/app/build.gradle`. Replace com.pitel.uikit.demo with your packageId
+
+```dart
+defaultConfig {
+        applicationId "com.pitel.uikit.demo"            // Replace your packageId
+        minSdkVersion flutterMinSdkVersion.toString()
+        targetSdkVersion flutter.targetSdkVersion
+        versionCode flutterVersionCode.toInteger()
+        versionName flutterVersionName
+    }
+```
+
 - In file `app.dart` fill sip info data
 
 ```dart

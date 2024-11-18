@@ -35,7 +35,7 @@ dependencies:
   cupertino_icons: ^1.0.2
   flutter_lints: 2.0.1
   go_router: ^10.1.0
-  flutter_pitel_voip: ^1.0.8+1
+  flutter_pitel_voip: ^1.0.8+4
   flutter_riverpod: ^2.3.4
   is_lock_screen: ^2.0.0
   package_info_plus: ^3.1.2
