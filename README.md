@@ -9,7 +9,7 @@ pitel_ui_kit is demo project.
 ## Installation
 
 > **Note**
-> Pitel UI Kit requires flutter version 3.24.2, dart version 3.5.2
+> Pitel UI Kit requires flutter version 3.29.3, dart version 3.7.2
 
 - **Setup to wake up app**: please follow guide in [here](https://github.com/tel4vn/flutter-pitel-voip/blob/main/PUSH_NOTIF.md) to setting push notification (FCM for android), Pushkit (for IOS).
 - In file `firebase_options.dart`, fill information from your google_service.json
@@ -34,20 +34,6 @@ pitel_ui_kit is demo project.
   );
 ```
 
-- Replace com.pitel.uikit.demo with your bundleId/ packageId in
-  - IOS: Open Xcode -> Signing & Capabilities -> Select Team & Replace your bundleId in field Bundle Identifier
-  - Android: In file `android/app/build.gradle`. Replace com.pitel.uikit.demo with your packageId
-
-```dart
-defaultConfig {
-        applicationId "com.pitel.uikit.demo"            // Replace your packageId
-        minSdkVersion flutterMinSdkVersion.toString()
-        targetSdkVersion flutter.targetSdkVersion
-        versionCode flutterVersionCode.toInteger()
-        versionName flutterVersionName
-    }
-```
-
 - In file `app.dart` fill sip info data
 
 ```dart
@@ -58,8 +44,7 @@ final sipInfoData = SipInfoData.fromJson({
     "port": PORT,
     "accountName": "${UUser}",      // Example 101
     "displayName": "${UUser}@${Domain}",
-    "wssUrl": "${URL WSS}",
-    "apiDomain": "${URL API}"
+    "wssUrl": "${URL WSS}"
 });
 ```
 

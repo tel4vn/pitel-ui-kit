@@ -3,7 +3,7 @@ import PushKit
 import Flutter
 import flutter_callkit_incoming_timer
 
-@UIApplicationMain
+@main
 @objc class AppDelegate: FlutterAppDelegate, PKPushRegistryDelegate {
     override func application(
         _ application: UIApplication,

@@ -2,10 +2,8 @@ import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:package_info_plus/package_info_plus.dart';
 import 'package:pitel_ui_kit/routing/app_router.dart';
 import 'package:flutter_pitel_voip/flutter_pitel_voip.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 import 'package:flutter_easyloading/flutter_easyloading.dart';
 
 import 'features/home/home_screen.dart';
@@ -19,7 +17,6 @@ final sipInfoDataExt1 = SipInfoData.fromJson({
   "accountName": "${UUser}",      // Example 101
   "displayName": "${UUser}@${Domain}",
   "wssUrl": "${URL WSS}",
-  "apiDomain": "${URL API}"
 });
 
 // Extension 2
@@ -31,7 +28,6 @@ final sipInfoDataEx2 = SipInfoData.fromJson({
   "accountName": "${UUser}",      // Example 101
   "displayName": "${UUser}@${Domain}",
   "wssUrl": "${URL WSS}",
-  "apiDomain": "${URL API}"
 });
 
 /// Note: sipInfoDataExt1 is data for Extension 1, sipInfoDataEx2 is data for Extension 2.
