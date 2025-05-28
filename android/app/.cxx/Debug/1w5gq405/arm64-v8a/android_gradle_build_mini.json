@@ -1,0 +1,20 @@
+{
+  "buildFiles": [
+    "/Users/anhquangdev/fvm/versions/3.29.3/packages/flutter_tools/gradle/src/main/groovy/CMakeLists.txt"
+  ],
+  "cleanCommandsComponents": [
+    [
+      "/Users/anhquangdev/Library/Android/sdk/cmake/3.22.1/bin/ninja",
+      "-C",
+      "/Users/anhquangdev/Pitel/source_code/pitel_flutter_docs/pitel_ui_kit/android/app/.cxx/Debug/1w5gq405/arm64-v8a",
+      "clean"
+    ]
+  ],
+  "buildTargetsCommandComponents": [
+    "/Users/anhquangdev/Library/Android/sdk/cmake/3.22.1/bin/ninja",
+    "-C",
+    "/Users/anhquangdev/Pitel/source_code/pitel_flutter_docs/pitel_ui_kit/android/app/.cxx/Debug/1w5gq405/arm64-v8a",
+    "{LIST_OF_TARGETS_TO_BUILD}"
+  ],
+  "libraries": {}
+}
