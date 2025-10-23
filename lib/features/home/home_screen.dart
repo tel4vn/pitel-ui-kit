@@ -47,6 +47,24 @@ class _MyHomeScreen extends ConsumerState<HomeScreen> {
 
   void _getDeviceToken() async {
     final deviceTokenRes = await PushVoipNotif.getDeviceToken();
+    debugPrint('deviceTokenRes: $deviceTokenRes');
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    final isLoggedIn = prefs.getBool("IS_LOGGED_IN");
+    if (isLoggedIn != null && isLoggedIn) {
+      setState(() {
+        receivedMsg = 'REGISTERED';
+        isLogin = true;
+      });
+    }
+  }
+
+  Future<PushNotifParams> _getPushNotifParams() async {
+    final PackageInfo packageInfo = await PackageInfo.fromPlatform();
+
+    return PushNotifParams(
+      teamId: '${apple_team_id}',
+      bundleId: packageInfo.packageName,
+    );
   }
 
   void _logout() async {
@@ -54,7 +72,15 @@ class _MyHomeScreen extends ConsumerState<HomeScreen> {
       isLogin = false;
       receivedMsg = 'UNREGISTER';
     });
-    pitelClient.logoutExtension(sipInfoData);
+    final PushNotifParams pushNotifParams = await _getPushNotifParams();
+
+    final res = await pitelClient.logoutExtension(
+      sipInfoData: sipInfoData,
+      pushNotifParams: pushNotifParams,
+    );
+    setState(() {
+      receivedMsg = res;
+    });
     // Set isLoggedIn = false when user logout
     final SharedPreferences prefs = await SharedPreferences.getInstance();
     prefs.setBool("IS_LOGGED_IN", false);
@@ -62,17 +88,21 @@ class _MyHomeScreen extends ConsumerState<HomeScreen> {
 
   void _handleRegister() async {
     // SIP INFO DATA: input Sip info config data
-    final PackageInfo packageInfo = await PackageInfo.fromPlatform();
-
-    final PushNotifParams pushNotifParams = PushNotifParams(
-      teamId: '${apple_team_id}',
-      bundleId: packageInfo.packageName,
-    );
+    final PushNotifParams pushNotifParams = await _getPushNotifParams();
 
     final pitelClient = PitelServiceImpl();
     final pitelSettingRes =
         await pitelClient.setExtensionInfo(sipInfoData, pushNotifParams);
     ref.read(pitelSettingProvider.notifier).state = pitelSettingRes;
+  }
+
+  void _handleRegisterCall() async {
+    final PitelSettings? pitelSetting = ref.watch(pitelSettingProvider);
+    if (pitelSetting != null) {
+      pitelCall.register(pitelSetting);
+    } else {
+      _handleRegister();
+    }
   }
 
   void _onRegisterState(String registerState) async {
@@ -85,29 +115,6 @@ class _MyHomeScreen extends ConsumerState<HomeScreen> {
         receivedMsg = registerState;
         isLogin = true;
       });
-    }
-  }
-
-  void registerFunc() async {
-    final PackageInfo packageInfo = await PackageInfo.fromPlatform();
-
-    final PushNotifParams pushNotifParams = PushNotifParams(
-      teamId: '${apple_team_id}',
-      bundleId: packageInfo.packageName,
-    );
-
-    final pitelClient = PitelServiceImpl();
-    final pitelSetting =
-        await pitelClient.setExtensionInfo(sipInfoData, pushNotifParams);
-    ref.read(pitelSettingProvider.notifier).state = pitelSetting;
-  }
-
-  void _handleRegisterCall() async {
-    final PitelSettings? pitelSetting = ref.watch(pitelSettingProvider);
-    if (pitelSetting != null) {
-      pitelCall.register(pitelSetting);
-    } else {
-      registerFunc();
     }
   }
 
