@@ -241,6 +241,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "3.10.6"
+  fixnum:
+    dependency: transitive
+    description:
+      name: fixnum
+      sha256: b6dc7065e46c974bc7c5f143080a6764ec7a4be6da1285ececdc37be96de53be
+      url: "https://pub.dev"
+    source: hosted
+    version: "1.1.1"
   flutter:
     dependency: "direct main"
     description: flutter
@@ -250,10 +258,10 @@ packages:
     dependency: transitive
     description:
       name: flutter_callkit_incoming_timer
-      sha256: "86904e89373dbe58680772bead0a2e34515f1206b6c3d22fbce69bb29cd19aca"
+      sha256: "4c321fcd454a698a1298af88d70c5965e7f0ea2b46c8c51e158f209f0606667c"
       url: "https://pub.dev"
     source: hosted
-    version: "1.0.3+11"
+    version: "1.0.3+12"
   flutter_easyloading:
     dependency: "direct main"
     description:
@@ -282,10 +290,10 @@ packages:
     dependency: "direct main"
     description:
       name: flutter_pitel_voip
-      sha256: ba3e5c9061ace3acac366ec7075af59f369c1bad053812c589302664a062d430
+      sha256: dfbb2368eed8587c041df855dc13fb80de5c0b5eed2793407016da722ae69398
       url: "https://pub.dev"
     source: hosted
-    version: "1.0.9+1"
+    version: "1.0.10+2"
   flutter_riverpod:
     dependency: "direct main"
     description:
@@ -294,6 +302,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "2.3.4"
+  flutter_show_when_locked:
+    dependency: transitive
+    description:
+      name: flutter_show_when_locked
+      sha256: c2c8c7a013a05de4e8e9e3740d98589ce3fb1cda7b8c22bd4e9db096b8096e79
+      url: "https://pub.dev"
+    source: hosted
+    version: "1.0.0"
   flutter_spinkit:
     dependency: transitive
     description:
@@ -709,6 +725,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "1.10.1"
+  sprintf:
+    dependency: transitive
+    description:
+      name: sprintf
+      sha256: "1fc9ffe69d4df602376b52949af107d8f5703b77cda567c4d7d86a0693120f23"
+      url: "https://pub.dev"
+    source: hosted
+    version: "7.0.0"
   stack_trace:
     dependency: transitive
     description:
@@ -793,10 +817,10 @@ packages:
     dependency: transitive
     description:
       name: uuid
-      sha256: "648e103079f7c64a36dc7d39369cabb358d377078a051d6ae2ad3aa539519313"
+      sha256: a5be9ef6618a7ac1e964353ef476418026db906c4facdedaa299b7a2e71690ff
       url: "https://pub.dev"
     source: hosted
-    version: "3.0.7"
+    version: "4.5.1"
   vector_math:
     dependency: transitive
     description:
