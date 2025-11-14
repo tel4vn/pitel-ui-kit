@@ -290,10 +290,10 @@ packages:
     dependency: "direct main"
     description:
       name: flutter_pitel_voip
-      sha256: dfbb2368eed8587c041df855dc13fb80de5c0b5eed2793407016da722ae69398
+      sha256: fbeca5138b236b8ca5c9949aa3892edf9c8040b4b3beb42b42f717c3bd1b7c45
       url: "https://pub.dev"
     source: hosted
-    version: "1.0.10+2"
+    version: "1.0.10+5"
   flutter_riverpod:
     dependency: "direct main"
     description:

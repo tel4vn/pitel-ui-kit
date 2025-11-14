@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
@@ -6,6 +8,7 @@ import 'package:pitel_ui_kit/app.dart';
 import 'package:pitel_ui_kit/routing/app_router.dart';
 import 'package:flutter_pitel_voip/flutter_pitel_voip.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:flutter_callkit_incoming_timer/flutter_callkit_incoming.dart';
 
 // Config your state management in here
 final callStateController =
@@ -38,11 +41,18 @@ class _MyHomeScreen extends ConsumerState<HomeScreen> {
     state = pitelCall.getRegisterState();
     receivedMsg = 'UNREGISTER';
     _getDeviceToken();
+    _requestFullIntentPermission();
   }
 
   @override
   void deactivate() {
     super.deactivate();
+  }
+
+  void _requestFullIntentPermission() async {
+    if (Platform.isAndroid) {
+      await FlutterCallkitIncoming.requestFullIntentPermission();
+    }
   }
 
   void _getDeviceToken() async {
