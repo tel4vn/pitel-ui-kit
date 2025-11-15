@@ -9,7 +9,7 @@ pitel_ui_kit is demo project.
 ## Installation
 
 > **Note**
-> Pitel UI Kit requires flutter version 3.29.3, dart version 3.7.2
+> Pitel UI Kit requires flutter version 3.38.1, dart version 3.10.0
 
 - **Setup to wake up app**: please follow guide in [here](https://github.com/tel4vn/flutter-pitel-voip/blob/main/PUSH_NOTIF.md) to setting push notification (FCM for android), Pushkit (for IOS).
 - In file `firebase_options.dart`, fill information from your google_service.json
