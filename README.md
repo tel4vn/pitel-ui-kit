@@ -12,7 +12,9 @@ pitel_ui_kit is demo project.
 > Pitel UI Kit requires flutter version 3.38.1, dart version 3.10.0
 
 - **Setup to wake up app**: please follow guide in [here](https://github.com/tel4vn/flutter-pitel-voip/blob/main/PUSH_NOTIF.md) to setting push notification (FCM for android), Pushkit (for IOS).
-- In file `firebase_options.dart`, fill information from your google_service.json
+
+- In `lib/constants/constants.dart` fill your infomation from your `SIP ACCOUNT DOMAIN.pdf` to run example.
+- In file `firebase_options.dart`, fill your infomation from your google_service.json
 
 ```dart
   // Replace information from your google_service.json
@@ -38,13 +40,13 @@ pitel_ui_kit is demo project.
 
 ```dart
 final sipInfoData = SipInfoData.fromJson({
+    "accountName": "${Extension}",      // Example 101
     "authPass": "${Password}",
     "registerServer": "${Domain}",
-    "outboundServer": "${Outbound Proxy}",
-    "port": PORT,
-    "accountName": "${UUser}",      // Example 101
-    "displayName": "${UUser}@${Domain}",
-    "wssUrl": "${URL WSS}"
+    "outboundServer": "${Domain}",
+    "port": PORT,                       // Default 50061
+    "displayName": "${Display Name}",   // John, Kate
+    "wssUrl": "${WSS Mobile}"
 });
 ```
 
@@ -52,8 +54,8 @@ final sipInfoData = SipInfoData.fromJson({
 
 ```dart
   final PushNotifParams pushNotifParams = PushNotifParams(
-    teamId: '${apple_team_id}',
-    bundleId: '${bundle_id}',
+    teamId: '${APPLE_TEAM_ID}',
+    bundleId: '${BUNDLE_ID}',
   );
 
   pitelService.setExtensionInfo(sipInfoData, pushNotifParams);
