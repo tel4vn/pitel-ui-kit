@@ -2,6 +2,7 @@ import UIKit
 import PushKit
 import Flutter
 import flutter_callkit_incoming_timer
+import flutter_webrtc
 
 @main
 @objc class AppDelegate: FlutterAppDelegate, PKPushRegistryDelegate {
@@ -16,6 +17,25 @@ import flutter_callkit_incoming_timer
         let voipRegistry: PKPushRegistry = PKPushRegistry(queue: mainQueue)
         voipRegistry.delegate = self
         voipRegistry.desiredPushTypes = [PKPushType.voIP]
+
+        RTCAudioSession.sharedInstance().useManualAudio = true
+        RTCAudioSession.sharedInstance().isAudioEnabled = false
+        
+        let controller : FlutterViewController = window?.rootViewController as! FlutterViewController
+        let audioChannel = FlutterMethodChannel(name: "com.pitel.flutter_pitel_voip/audio",
+                                              binaryMessenger: controller.binaryMessenger)
+        audioChannel.setMethodCallHandler({
+            (call: FlutterMethodCall, result: @escaping FlutterResult) -> Void in
+            if call.method == "enableAudio" {
+                self.didActivateAudioSession(AVAudioSession.sharedInstance())
+                result("Audio Enabled")
+            } else if call.method == "disableAudio" {
+                self.didDeactivateAudioSession(AVAudioSession.sharedInstance())
+                result("Audio Disabled")
+            } else {
+                result(FlutterMethodNotImplemented)
+            }
+        })
         
         return super.application(application, didFinishLaunchingWithOptions: launchOptions)
     }
@@ -74,5 +94,40 @@ import flutter_callkit_incoming_timer
         SwiftFlutterCallkitIncomingPlugin.sharedInstance?.showCallkitIncoming(data, fromPushKit: true)
     }
     
-    
+    // 1. Khi iOS kích hoạt Audio (Người dùng bấm nghe)
+    func didActivateAudioSession(_ audioSession: AVAudioSession) {
+        print("📢 [Native] iOS đã kích hoạt Audio Session")
+        
+        RTCAudioSession.sharedInstance().lockForConfiguration()
+        do {
+            try audioSession.setCategory(.playAndRecord, mode: .voiceChat, options: [.allowBluetooth, .allowBluetoothA2DP])
+            try audioSession.setActive(true)
+            
+            // Report to WebRTC
+            RTCAudioSession.sharedInstance().audioSessionDidActivate(audioSession)
+            RTCAudioSession.sharedInstance().isAudioEnabled = true
+            
+            print("✅ [Native] Micro và Loa đã được cấu hình và bật thành công!")
+        } catch {
+            print("❌ [Native] Lỗi cấu hình Audio: \(error)")
+        }
+        RTCAudioSession.sharedInstance().unlockForConfiguration()
+    }
+
+    // 2. Khi cuộc gọi kết thúc
+    func didDeactivateAudioSession(_ audioSession: AVAudioSession) {
+        print("📢 [Native] iOS đã tắt Audio Session")
+        
+        RTCAudioSession.sharedInstance().lockForConfiguration()
+        RTCAudioSession.sharedInstance().isAudioEnabled = false
+        RTCAudioSession.sharedInstance().audioSessionDidDeactivate(audioSession)
+        
+        do {
+            // Giải phóng hoàn toàn để các app khác dùng được mic/loa
+            try audioSession.setActive(false, options: .notifyOthersOnDeactivation)
+        } catch {
+            print("❌ [Native] Lỗi khi giải phóng Audio: \(error)")
+        }
+        RTCAudioSession.sharedInstance().unlockForConfiguration()
+    }
 }
