@@ -145,22 +145,6 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "0.7.11"
-  device_info_plus:
-    dependency: transitive
-    description:
-      name: device_info_plus
-      sha256: "0c6396126421b590089447154c5f98a5de423b70cfb15b1578fd018843ee6f53"
-      url: "https://pub.dev"
-    source: hosted
-    version: "11.4.0"
-  device_info_plus_platform_interface:
-    dependency: transitive
-    description:
-      name: device_info_plus_platform_interface
-      sha256: "0b04e02b30791224b31969eb1b50d723498f402971bff3630bca2ba839bd1ed2"
-      url: "https://pub.dev"
-    source: hosted
-    version: "7.0.2"
   eraser:
     dependency: transitive
     description:
@@ -258,10 +242,10 @@ packages:
     dependency: transitive
     description:
       name: flutter_callkit_incoming_timer
-      sha256: "4c321fcd454a698a1298af88d70c5965e7f0ea2b46c8c51e158f209f0606667c"
+      sha256: dd9833653e5dfe5b9b8165a8583fc78268c1ddf145a8a04e7d19a1079abe076e
       url: "https://pub.dev"
     source: hosted
-    version: "1.0.3+12"
+    version: "1.0.3+13"
   flutter_easyloading:
     dependency: "direct main"
     description:
@@ -290,10 +274,10 @@ packages:
     dependency: "direct main"
     description:
       name: flutter_pitel_voip
-      sha256: fbeca5138b236b8ca5c9949aa3892edf9c8040b4b3beb42b42f717c3bd1b7c45
+      sha256: bca2d8fa1e21aa3804bc131a59945464102deafe0799364ee30b91587f3a3fb4
       url: "https://pub.dev"
     source: hosted
-    version: "1.0.10+5"
+    version: "1.0.12"
   flutter_riverpod:
     dependency: "direct main"
     description:
@@ -436,10 +420,10 @@ packages:
     dependency: transitive
     description:
       name: logger
-      sha256: "5076f09225f91dc49289a4ccb92df2eeea9ea01cf7c26d49b3a1f04c6a49eec1"
+      sha256: a7967e31b703831a893bbc3c3dd11db08126fe5f369b5c648a36f821979f5be3
       url: "https://pub.dev"
     source: hosted
-    version: "1.1.0"
+    version: "2.6.2"
   logging:
     dependency: transitive
     description:
@@ -497,7 +481,7 @@ packages:
     source: hosted
     version: "0.5.0"
   package_info_plus:
-    dependency: "direct overridden"
+    dependency: "direct main"
     description:
       name: package_info_plus
       sha256: "7976bfe4c583170d6cdc7077e3237560b364149fcd268b5f53d95a991963b191"
@@ -657,29 +641,29 @@ packages:
     source: hosted
     version: "0.3.2"
   shared_preferences:
-    dependency: transitive
+    dependency: "direct main"
     description:
       name: shared_preferences
-      sha256: "6e8bf70b7fef813df4e9a36f658ac46d107db4b4cfe1048b477d4e453a8159f5"
+      sha256: "2939ae520c9024cb197fc20dee269cd8cdbf564c8b5746374ec6cacdc5169e64"
       url: "https://pub.dev"
     source: hosted
-    version: "2.5.3"
+    version: "2.5.4"
   shared_preferences_android:
     dependency: transitive
     description:
       name: shared_preferences_android
-      sha256: "20cbd561f743a342c76c151d6ddb93a9ce6005751e7aa458baad3858bfbfb6ac"
+      sha256: cbc40be9be1c5af4dab4d6e0de4d5d3729e6f3d65b89d21e1815d57705644a6f
       url: "https://pub.dev"
     source: hosted
-    version: "2.4.10"
+    version: "2.4.20"
   shared_preferences_foundation:
     dependency: transitive
     description:
       name: shared_preferences_foundation
-      sha256: "6a52cfcdaeac77cad8c97b539ff688ccfc458c007b4db12be584fbe5c0e49e03"
+      sha256: "4e7eaffc2b17ba398759f1151415869a34771ba11ebbccd1b0145472a619a64f"
       url: "https://pub.dev"
     source: hosted
-    version: "2.5.4"
+    version: "2.5.6"
   shared_preferences_linux:
     dependency: transitive
     description:
@@ -877,14 +861,6 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "5.13.0"
-  win32_registry:
-    dependency: transitive
-    description:
-      name: win32_registry
-      sha256: "6f1b564492d0147b330dd794fee8f512cec4977957f310f9951b5f9d83618dae"
-      url: "https://pub.dev"
-    source: hosted
-    version: "2.1.0"
   xdg_directories:
     dependency: transitive
     description:
@@ -910,5 +886,5 @@ packages:
     source: hosted
     version: "3.1.1"
 sdks:
-  dart: ">=3.8.0-0 <4.0.0"
-  flutter: ">=3.27.0"
+  dart: ">=3.9.0 <4.0.0"
+  flutter: ">=3.35.0"
