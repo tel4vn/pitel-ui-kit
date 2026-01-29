@@ -4,16 +4,11 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:package_info_plus/package_info_plus.dart';
-import 'package:pitel_ui_kit/constants/constants.dart';
+import 'package:pitel_ui_kit/app.dart';
 import 'package:pitel_ui_kit/routing/app_router.dart';
 import 'package:flutter_pitel_voip/flutter_pitel_voip.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:flutter_callkit_incoming_timer/flutter_callkit_incoming.dart';
-
-// Config your state management in here
-final callStateController =
-    StateProvider<PitelCallStateEnum>((ref) => PitelCallStateEnum.NONE);
-final pitelSettingProvider = StateProvider<PitelSettings?>((ref) => null);
 
 class HomeScreen extends ConsumerStatefulWidget {
   final PitelCall _pitelCall = PitelClient.getInstance().pitelCall;
@@ -27,10 +22,8 @@ class HomeScreen extends ConsumerStatefulWidget {
 class _MyHomeScreen extends ConsumerState<HomeScreen> {
   PitelCall get pitelCall => widget._pitelCall;
   PitelClient pitelClient = PitelClient.getInstance();
-  final pitelService = PitelServiceImpl();
-  SharedPreferences? _prefs;
 
-  String registerStatus = 'UNREGISTER';
+  String receivedMsg = 'UNREGISTER';
   bool isLogin = false;
 
   final TextEditingController _textController = TextEditingController();
@@ -39,15 +32,14 @@ class _MyHomeScreen extends ConsumerState<HomeScreen> {
   @override
   initState() {
     super.initState();
-    registerStatus = 'UNREGISTER';
-    _initPrefs();
+    receivedMsg = 'UNREGISTER';
     _getDeviceToken();
     _requestFullIntentPermission();
   }
 
-  /// Initialize SharedPreferences to cache login state
-  Future<void> _initPrefs() async {
-    _prefs = await SharedPreferences.getInstance();
+  @override
+  void deactivate() {
+    super.deactivate();
   }
 
   /// Dispose TextEditingController when the widget is destroyed
@@ -64,14 +56,15 @@ class _MyHomeScreen extends ConsumerState<HomeScreen> {
     }
   }
 
-  /// Get device token and check login state
+  // Get device token
   void _getDeviceToken() async {
     final deviceTokenRes = await PushVoipNotif.getDeviceToken();
     debugPrint('deviceTokenRes: $deviceTokenRes');
-    final isLoggedIn = _prefs?.getBool("IS_LOGGED_IN");
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    final isLoggedIn = prefs.getBool("IS_LOGGED_IN");
     if (isLoggedIn != null && isLoggedIn) {
       setState(() {
-        registerStatus = 'REGISTERED';
+        receivedMsg = 'REGISTERED';
         isLogin = true;
       });
     }
@@ -89,50 +82,49 @@ class _MyHomeScreen extends ConsumerState<HomeScreen> {
 
   /// Logout SIP account and update login state
   void _logout() async {
+    setState(() {
+      isLogin = false;
+      receivedMsg = 'UNREGISTER';
+    });
     final PushNotifParams pushNotifParams = await _getPushNotifParams();
-    await pitelClient.logoutExtension(
+
+    final res = await pitelClient.logoutExtension(
       sipInfoData: sipInfoData,
       pushNotifParams: pushNotifParams,
     );
-
-    if (mounted) {
-      setState(() {
-        isLogin = false;
-        registerStatus = 'UNREGISTER';
-      });
-    }
+    setState(() {
+      receivedMsg = res;
+    });
     // Set isLoggedIn = false when user logout
-    await _prefs?.setBool("IS_LOGGED_IN", false);
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
+    prefs.setBool("IS_LOGGED_IN", false);
   }
 
   /// Register SIP extension and save config to provider
-  void _handleRegister() async {
-    final PushNotifParams pushNotifParams = await _getPushNotifParams();
+  void _handleRegister({required bool shouldRegisterDeviceToken}) async {
+    final PackageInfo packageInfo = await PackageInfo.fromPlatform();
+    PitelClient pitelClient = PitelClient.getInstance();
 
-    final pitelClient = PitelServiceImpl();
-    final pitelSettingRes =
-        await pitelClient.setExtensionInfo(sipInfoData, pushNotifParams);
-    ref.read(pitelSettingProvider.notifier).state = pitelSettingRes;
-  }
-
-  /// Register extension if not available, then register SIP
-  void _handleRegisterCall() async {
-    final PitelSettings? pitelSetting = ref.read(pitelSettingProvider);
-    if (pitelSetting != null) {
-      pitelCall.register(pitelSetting);
-    } else {
-      _handleRegister();
-    }
+    final PushNotifParams pushNotifParams = PushNotifParams(
+      teamId: APPLE_TEAM_ID,
+      bundleId: packageInfo.packageName,
+    );
+    await pitelClient.registerExtension(
+        sipInfoData: sipInfoData,
+        pushNotifParams: pushNotifParams,
+        appMode: 'dev',
+        shouldRegisterDeviceToken: shouldRegisterDeviceToken);
   }
 
   /// Callback when SIP registration state changes
   void _onRegisterState(String registerState) async {
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
     if (registerState == 'REGISTERED') {
       //  Set isLoggedIn = true when user logout
-      _prefs?.setBool("IS_LOGGED_IN", true);
+      prefs.setBool("IS_LOGGED_IN", true);
 
       setState(() {
-        registerStatus = registerState;
+        receivedMsg = registerState;
         isLogin = true;
       });
     }
@@ -158,7 +150,7 @@ class _MyHomeScreen extends ConsumerState<HomeScreen> {
       // Make call outgoing
       pitelCall.outGoingCall(
         phoneNumber: dest,
-        handleRegisterCall: _handleRegisterCall,
+        handleRegister: () => _handleRegister(shouldRegisterDeviceToken: false),
       );
     }
   }
@@ -173,23 +165,19 @@ class _MyHomeScreen extends ConsumerState<HomeScreen> {
       body: PitelVoipCall(
         goBack: () => context.go('/'),
         goToCall: () {
-          FocusScope.of(context).unfocus(); // Dismiss keyboard
+          FocusScope.of(context).unfocus();
           context.pushNamed(AppRoute.callPage.name);
         },
-        onCallState: (callState) {
-          ref.read(callStateController.notifier).state = callState;
-        },
+        onCallState: (callState) {},
         onRegisterState: (String registerState) {
           _onRegisterState(registerState);
         },
-        bundleId: BUNDLE_ID,
-        sipInfoData: sipInfoData,
         child: Column(crossAxisAlignment: CrossAxisAlignment.center, children: [
           Container(
               padding: const EdgeInsets.all(20),
               width: 360,
               child: Text(
-                'STATUS: $registerStatus',
+                'STATUS: $receivedMsg',
                 textAlign: TextAlign.center,
                 style: const TextStyle(
                     fontSize: 18,
@@ -207,7 +195,8 @@ class _MyHomeScreen extends ConsumerState<HomeScreen> {
                     ),
                   ))
               : ElevatedButton(
-                  onPressed: _handleRegister,
+                  onPressed: () =>
+                      _handleRegister(shouldRegisterDeviceToken: true),
                   child: const Text("Register"),
                 ),
           const SizedBox(height: 20),
@@ -222,14 +211,13 @@ class _MyHomeScreen extends ConsumerState<HomeScreen> {
                   hintText: "Input Phone number",
                   hintStyle: TextStyle(fontSize: 18)),
               controller: _textController,
+              // showCursor: true,
             ),
           ),
           const SizedBox(height: 20),
-          registerStatus == "REGISTERED"
-              ? ElevatedButton(
-                  onPressed: () => _handleCall(context, true),
-                  child: const Text("Call"))
-              : const SizedBox.shrink(),
+          ElevatedButton(
+              onPressed: () => _handleCall(context, true),
+              child: const Text("Call")),
         ]),
       ),
     );
