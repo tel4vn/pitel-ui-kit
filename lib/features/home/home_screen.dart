@@ -1,25 +1,25 @@
 import 'dart:io';
 
 import 'package:flutter/material.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:package_info_plus/package_info_plus.dart';
 import 'package:pitel_ui_kit/app.dart';
+import 'package:pitel_ui_kit/constants/constants.dart';
 import 'package:pitel_ui_kit/routing/app_router.dart';
 import 'package:flutter_pitel_voip/flutter_pitel_voip.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:flutter_callkit_incoming_timer/flutter_callkit_incoming.dart';
 
-class HomeScreen extends ConsumerStatefulWidget {
+class HomeScreen extends StatefulWidget {
   final PitelCall _pitelCall = PitelClient.getInstance().pitelCall;
 
   HomeScreen({Key? key}) : super(key: key);
 
   @override
-  ConsumerState<HomeScreen> createState() => _MyHomeScreen();
+  State<HomeScreen> createState() => _MyHomeScreen();
 }
 
-class _MyHomeScreen extends ConsumerState<HomeScreen> {
+class _MyHomeScreen extends State<HomeScreen> {
   PitelCall get pitelCall => widget._pitelCall;
   PitelClient pitelClient = PitelClient.getInstance();
 
