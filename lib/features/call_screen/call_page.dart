@@ -9,7 +9,6 @@ class CallPage extends StatelessWidget {
     return const CallScreen(
       bgColor: Colors.cyan,
       txtWaiting: 'Waiting...',
-      showHoldCall: true,
     );
   }
 }
